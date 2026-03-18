@@ -1,6 +1,6 @@
 # bankonit oss toolkit
 
-portable scripts for fixing common outlook, office, and windows issues on bank branch machines. built for onsite visits -- drop it on a usb stick, run `launcher.bat`, pick a tool.
+portable scripts for fixing common outlook, office, and windows issues on bank branch machines. built for onsite visits -> drop it on a usb stick, run `launcher.bat`, pick a tool.
 
 supports on-premises exchange, microsoft 365, and hybrid environments. environment-sensitive scripts adjust their behavior based on what you select at startup.
 
@@ -11,8 +11,8 @@ supports on-premises exchange, microsoft 365, and hybrid environments. environme
 ## requirements
 
 - windows 10 or 11
-- most scripts require admin -- the launcher handles self-elevation automatically
-- no powershell profile or execution policy changes needed -- scripts run with `-ExecutionPolicy Bypass`
+- most scripts require admin -> the launcher handles self-elevation automatically
+- no powershell profile or execution policy changes needed -> scripts run with `-ExecutionPolicy Bypass`
 
 ---
 
@@ -20,11 +20,11 @@ supports on-premises exchange, microsoft 365, and hybrid environments. environme
 
 1. download or clone this repo
 2. copy the folder to a usb stick (or run it directly from wherever)
-3. double-click `launcher.bat` -- it will self-elevate if needed
+3. double-click `launcher.bat` -> it will self-elevate if needed
 4. select the client's mail environment when prompted
 5. pick a tool from the menu
 
-to package it as a zip for sharing, run `package.bat` -- drops a zip on your desktop.
+to package it as a zip for sharing, run `package.bat` -> drops a zip on your desktop.
 
 ---
 
@@ -36,7 +36,7 @@ to package it as a zip for sharing, run `package.bat` -- drops a zip on your des
 |---|------|--------------|:-----------:|
 | 1 | outlook autodiscover | configures autodiscover registry keys for on-prem, m365, or hybrid | yes |
 | 2 | block aad workplace join | suppresses the "your org wants to manage this device" entra id prompt | yes |
-| 3 | disable wam | disables web account manager for office auth -- on-prem only, warns on m365/hybrid | yes |
+| 3 | disable wam | disables web account manager for office auth -> on-prem only, warns on m365/hybrid | yes |
 | 4 | credential cleanup | removes stale exchange/office entries from windows credential manager | no |
 | 5 | outlook profile rebuild | deletes outlook profile(s) from registry so outlook prompts for fresh setup | no |
 | 6 | clear office cache | clears office identity, license, and token broker cache | no |
@@ -69,17 +69,17 @@ run these first if you're not sure what you're dealing with. output saves to a t
 
 when you select an environment at startup, a few tools change how they behave:
 
-- **autodiscover** -- blocks cloud endpoints on-prem, removes blocks on m365, sets hybrid-safe config for hybrid
-- **disable wam** -- applies on-prem, exits with a warning on m365 (would break auth), prompts before applying on hybrid
-- **block aad workplace join** -- applies on-prem, prompts with a warning before applying on m365 or hybrid (can break conditional access)
-- **exchange connectivity** -- tests different endpoints depending on environment
+- **autodiscover** -> blocks cloud endpoints on-prem, removes blocks on m365, sets hybrid-safe config for hybrid
+- **disable wam** -> applies on-prem, exits with a warning on m365 (would break auth), prompts before applying on hybrid
+- **block aad workplace join** -> applies on-prem, prompts with a warning before applying on m365 or hybrid (can break conditional access)
+- **exchange connectivity** -> tests different endpoints depending on environment
 
 ---
 
 ## packaging for sharing
 
-run `package.bat` to create `BankOnIT-OSS.zip` on your desktop. no git or powershell knowledge needed on the receiving end -- just unzip and run.
+run `package.bat` to create `BankOnIT-OSS.zip` on your desktop. no git or powershell knowledge needed on the receiving end -> just unzip and run.
 
 ---
 
-built by patrick hart -- [hartforge.dev](https://hartforge.dev)
+built by patrick hart -> [hartforge.dev](https://hartforge.dev)
