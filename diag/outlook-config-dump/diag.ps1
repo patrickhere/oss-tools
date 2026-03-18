@@ -1,6 +1,8 @@
 # diag.ps1
 # Exports Outlook-related registry keys to a text file on the desktop
 
+param([string]$ClientName = "")
+
 Write-Host "  BankOnIT OSS | Outlook Config Dump" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 
@@ -55,7 +57,8 @@ try {
     }
 
     $desktop = [Environment]::GetFolderPath("Desktop")
-    $outFile = "$desktop\OSS-outlook-config-$timestamp.txt"
+    $slug    = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
+    $outFile = "$desktop\OSS-outlook-config$slug-$timestamp.txt"
     $output | Out-File $outFile -Encoding UTF8
 
     Write-Host ""

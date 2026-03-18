@@ -1,6 +1,8 @@
 # diag.ps1
 # Collects OS, domain, Outlook version, and key registry values -- saves to desktop
 
+param([string]$ClientName = "")
+
 Write-Host "  BankOnIT OSS | System Snapshot" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 
@@ -99,7 +101,8 @@ try {
     }
 
     $desktop = [Environment]::GetFolderPath("Desktop")
-    $outFile = "$desktop\OSS-snapshot-$timestamp.txt"
+    $slug    = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
+    $outFile = "$desktop\OSS-snapshot$slug-$timestamp.txt"
     $output | Out-File $outFile -Encoding UTF8
 
     Write-Host ""
