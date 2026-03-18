@@ -1,3 +1,5 @@
-Credential Cleanup
-Lists and removes stale Exchange/Office entries from Windows Credential Manager.
-Requires: No admin (operates on current user's credential store). Prompts for confirmation before deleting.
+credential cleanup
+
+lists and removes stale exchange/office entries from windows credential manager. prompts for confirmation before deleting anything.
+
+admin: no

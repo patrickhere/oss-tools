@@ -1,4 +1,5 @@
-Network Info
-Dumps IP, gateway, DNS, DHCP status, and lease info for all active adapters in readable format.
-Saves output to a timestamped file on the desktop.
-Requires: No admin.
+network info
+
+dumps ip, gateway, dns servers, dhcp status, and lease info for all active adapters. more readable than ipconfig /all.
+
+admin: no

@@ -1,3 +1,5 @@
-Disable Update Auto-Reboot
-Prevents Windows Update from rebooting while users are logged in. Sets AUOptions to notify-before-install.
-Requires: Admin.
+disable update auto-reboot
+
+stops windows update from rebooting mid-day while users are logged in. sets au policy to download automatically but notify before installing.
+
+admin: yes

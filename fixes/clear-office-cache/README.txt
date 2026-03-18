@@ -1,3 +1,5 @@
-Clear Office Cache
-Deletes Office identity, license, and token broker cache. Fixes account notice loops and activation issues.
-Requires: No admin (LOCALAPPDATA / HKCU only). Offers to close running Office apps first.
+clear office cache
+
+deletes office identity, license, and token broker cache. fixes account notice loops and activation issues. offers to close running office apps first.
+
+admin: no

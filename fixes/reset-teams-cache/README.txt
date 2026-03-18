@@ -1,3 +1,5 @@
-Reset Teams Cache
-Clears Teams cache folders (Cache, blob_storage, databases, GPUCache, IndexedDB, Local Storage, tmp).
-Requires: No admin. Offers to force-close Teams first.
+reset teams cache
+
+clears teams cache folders (cache, blob_storage, databases, gpucache, indexeddb, local storage, tmp). offers to force-close teams first.
+
+admin: no

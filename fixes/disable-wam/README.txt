@@ -1,3 +1,5 @@
-Disable WAM (Web Account Manager)
-Stops Office 16.0 from routing authentication through WAM/ADAL.
-Requires: Admin. Sets HKLM keys (no Policies equivalent exists for these values).
+disable wam
+
+disables web account manager for office auth. on-prem only -> exits with a warning on m365, prompts before applying on hybrid.
+
+admin: yes

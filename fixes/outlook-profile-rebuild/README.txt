@@ -1,3 +1,5 @@
-Outlook Profile Rebuild
-Deletes selected Outlook profile(s) from HKCU registry and clears DefaultProfile.
-Requires: No admin (HKCU only). Outlook must be closed; script offers to force-close it.
+outlook profile rebuild
+
+deletes selected outlook profile(s) from hkcu registry and clears the default profile so outlook prompts for a fresh setup. offers to force-close outlook first.
+
+admin: no

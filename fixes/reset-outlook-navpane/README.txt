@@ -1,3 +1,5 @@
-Reset Outlook Nav Pane
-Launches Outlook with /resetnavpane to fix a corrupt navigation pane. Outlook will open briefly.
-Requires: No admin.
+reset outlook nav pane
+
+launches outlook with /resetnavpane to fix a corrupt navigation pane. outlook will open briefly then can be closed.
+
+admin: no

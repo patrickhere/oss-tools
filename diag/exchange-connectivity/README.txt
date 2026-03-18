@@ -1,4 +1,5 @@
-Exchange Connectivity
-Tests DC reachability, autodiscover DNS, and M365 endpoint connectivity depending on selected environment.
-Saves results to a timestamped .txt file on the desktop.
-Requires: No admin.
+exchange connectivity
+
+tests dc reachability, autodiscover dns, and m365 endpoint connectivity based on the environment selected at startup.
+
+admin: no

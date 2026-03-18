@@ -1,3 +1,5 @@
-Disable MS Account Sign-in
-Sets HKLM policy to block personal Microsoft account sign-in prompts in Office.
-Requires: Admin.
+disable ms account sign-in
+
+blocks personal microsoft account prompts in office via hklm policy.
+
+admin: yes

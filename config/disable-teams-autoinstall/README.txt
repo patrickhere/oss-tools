@@ -1,3 +1,5 @@
-Disable Teams Auto-Install
-Prevents consumer Teams from auto-installing and launching after first logon.
-Requires: Admin. Sets both Policies and Teams registry paths for full coverage.
+disable teams auto-install
+
+prevents consumer teams from auto-installing and launching after first logon. sets both policies and teams registry paths for coverage.
+
+admin: yes

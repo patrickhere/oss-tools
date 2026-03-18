@@ -1,3 +1,5 @@
-Fix Print Spooler
-Stops the spooler, clears all files from spool\PRINTERS\, then restarts the spooler.
-Requires: Admin.
+fix print spooler
+
+stops the spooler, clears spool\printers\, restarts the spooler. fixes stuck print queues.
+
+admin: yes

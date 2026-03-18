@@ -1,4 +1,5 @@
-Outlook Config Dump
-Exports Outlook HKCU/HKLM registry keys to a timestamped .txt file on the desktop.
-Useful for before/after comparisons and remote troubleshooting.
-Requires: No admin.
+outlook config dump
+
+exports outlook hkcu/hklm registry keys to a .txt file on the desktop. good for before/after comparisons.
+
+admin: no
