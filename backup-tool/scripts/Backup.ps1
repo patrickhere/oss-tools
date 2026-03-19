@@ -80,6 +80,7 @@ $script:StartTime  = Get-Date
 # Component run-state tracking for summary
 $script:RanBelarc        = $false
 $script:RanTranswiz      = $false
+$script:RanBrowserData   = $false
 $script:RanPublicDesktop = $false
 $script:RanIpconfig      = $false
 
@@ -207,6 +208,7 @@ function Show-Summary {
     $components = @(
         @{ Name='Belarc';         Ran=$script:RanBelarc        },
         @{ Name='Transwiz';       Ran=$script:RanTranswiz      },
+        @{ Name='Browser Data';   Ran=$script:RanBrowserData   },
         @{ Name='Public Desktop'; Ran=$script:RanPublicDesktop },
         @{ Name='ipconfig';       Ran=$script:RanIpconfig      },
         @{ Name='Restore Assets'; Ran=$true                    }
@@ -332,13 +334,15 @@ Write-Log "Current user: $env:USERNAME"
 
 Write-Host ''
 Write-Host 'Optional components (press Enter to accept default):' -ForegroundColor White
-$DoBelarc        = Read-Toggle -Prompt 'Run Belarc Advisor scan'       -Default $true
-$DoTranswiz      = Read-Toggle -Prompt 'Launch Transwiz'               -Default $true
-$DoPublicDesktop = Read-Toggle -Prompt 'Copy Public Desktop'           -Default $true
-$DoIpconfig      = Read-Toggle -Prompt 'Capture ipconfig /all'         -Default $true
+$DoBelarc        = Read-Toggle -Prompt 'Run Belarc Advisor scan'                       -Default $true
+$DoTranswiz      = Read-Toggle -Prompt 'Launch Transwiz'                               -Default $true
+$DoBrowserData   = Read-Toggle -Prompt 'Copy browser bookmarks (Edge/Chrome/Firefox)'  -Default $true
+$DoPublicDesktop = Read-Toggle -Prompt 'Copy Public Desktop'                           -Default $true
+$DoIpconfig      = Read-Toggle -Prompt 'Capture ipconfig /all'                         -Default $true
 
 Write-Log "Belarc: $(if ($DoBelarc) {'enabled'} else {'skipped'})"
 Write-Log "Transwiz: $(if ($DoTranswiz) {'enabled'} else {'skipped'})"
+Write-Log "Browser data: $(if ($DoBrowserData) {'enabled'} else {'skipped'})"
 Write-Log "Public Desktop: $(if ($DoPublicDesktop) {'enabled'} else {'skipped'})"
 Write-Log "ipconfig: $(if ($DoIpconfig) {'enabled'} else {'skipped'})"
 
@@ -524,6 +528,67 @@ if ($DoPublicDesktop) {
     }
 } else {
     Write-Log 'Skipping Public Desktop per technician selection.'
+}
+
+# ---------------------------------------------------------------------------
+# PHASE 4e: BROWSER BOOKMARKS
+# ---------------------------------------------------------------------------
+if ($DoBrowserData) {
+    Write-Host ''
+    Write-Log 'Copying browser bookmarks...'
+
+    $profilesRoot = "$env:SystemDrive\Users"
+    $skipUsers    = @('Public', 'Default', 'Default User', 'All Users')
+    $userDirs     = Get-ChildItem -Path $profilesRoot -Directory -ErrorAction SilentlyContinue |
+                        Where-Object { $skipUsers -notcontains $_.Name }
+
+    $anyFound = $false
+    foreach ($userDir in $userDirs) {
+        $userName = $userDir.Name
+        $outBase  = Join-Path $script:HostDir "Browsers\$userName"
+
+        # Edge (Chromium) -- AppData\Local, not the old Favorites folder
+        $edgeBookmarks = Join-Path $userDir.FullName 'AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks'
+        if (Test-Path $edgeBookmarks) {
+            $edgeDest = Join-Path $outBase 'Edge'
+            $null = New-Item -ItemType Directory -Path $edgeDest -Force
+            Copy-Item $edgeBookmarks (Join-Path $edgeDest 'Bookmarks') -Force
+            Write-Log "Edge bookmarks saved for $userName"
+            $anyFound = $true
+        }
+
+        # Chrome
+        $chromeBookmarks = Join-Path $userDir.FullName 'AppData\Local\Google\Chrome\User Data\Default\Bookmarks'
+        if (Test-Path $chromeBookmarks) {
+            $chromeDest = Join-Path $outBase 'Chrome'
+            $null = New-Item -ItemType Directory -Path $chromeDest -Force
+            Copy-Item $chromeBookmarks (Join-Path $chromeDest 'Bookmarks') -Force
+            Write-Log "Chrome bookmarks saved for $userName"
+            $anyFound = $true
+        }
+
+        # Firefox -- places.sqlite lives in a randomly-named profile dir
+        $ffBase = Join-Path $userDir.FullName 'AppData\Roaming\Mozilla\Firefox\Profiles'
+        if (Test-Path $ffBase) {
+            $ffPlaces = Get-ChildItem -Path $ffBase -Recurse -Filter 'places.sqlite' -ErrorAction SilentlyContinue |
+                            Select-Object -First 1
+            if ($ffPlaces) {
+                $ffDest = Join-Path $outBase 'Firefox'
+                $null = New-Item -ItemType Directory -Path $ffDest -Force
+                Copy-Item $ffPlaces.FullName (Join-Path $ffDest 'places.sqlite') -Force
+                Write-Log "Firefox bookmarks saved for $userName"
+                $anyFound = $true
+            }
+        }
+    }
+
+    if ($anyFound) {
+        $script:RanBrowserData = $true
+    } else {
+        Write-Log 'No browser bookmarks found for any user profile.' -Severity WARN
+    }
+} else {
+    Write-Log 'Skipping browser data per technician selection.'
 }
 
 # ---------------------------------------------------------------------------
