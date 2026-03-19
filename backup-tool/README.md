@@ -71,15 +71,6 @@ Primary location for technicians: `R:\Travel Team\Tools\Backup\`
    - **Errors must be 0** before you call it good.
    - Non-zero warnings or errors -- open `Backups\<COMPUTER_NAME>\backuplog.txt`.
 
-8. **Hand off to engineering**
-   - The entire `Backups\<COMPUTER_NAME>\` folder, or at minimum:
-     - `backuplog.txt`
-     - `<COMPUTER_NAME>.html` (Belarc report)
-     - `ipconfig.txt`
-     - `Restore (run as admin).bat`
-     - `restore_exclude.txt`
-     - Any `.trans.zip` created by Transwiz
-
 ---
 
 ## 3. Hiren's / Offline Backup (`scripts\Backup_Hirens.bat`)
