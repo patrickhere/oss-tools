@@ -189,7 +189,7 @@ function Show-Summary {
     Write-Host '  Backup Summary' -ForegroundColor Cyan
     Write-Host $sep -ForegroundColor Cyan
     Write-Host ("  Computer  : {0}" -f $env:COMPUTERNAME)
-    Write-Host ("  User      : {0}" -f $script:UserToBackup)
+    Write-Host ("  User      : {0}" -f $env:USERNAME)
     Write-Host ("  Backup to : {0}" -f $script:HostDir)
     Write-Host ("  Elapsed   : {0}" -f $elapsedStr)
     Write-Host ''
@@ -264,7 +264,7 @@ $banner = @'
    |____/ \__,_|_| |_|_|\_\\___/|_| |_|___| |_|
 
     BankOnIT Backup Utility  --  PowerShell Edition
-    Patrick Hart -- hartforge.dev
+    patrick hart -- hartforge.dev
   ==================================================
   Computer : {0}
   Date     : {1}
@@ -324,8 +324,7 @@ Write-Log "Host backup dir: $($script:HostDir)"
 # ---------------------------------------------------------------------------
 # PHASE 3: PROMPTS + TOGGLES
 # ---------------------------------------------------------------------------
-$script:UserToBackup = $env:USERNAME
-Write-Log "Current user: $($script:UserToBackup)"
+Write-Log "Current user: $env:USERNAME"
 
 Write-Host ''
 Write-Host 'Optional components (press Enter to accept default):' -ForegroundColor White
@@ -533,9 +532,6 @@ if (Test-Path $RestoreExclude) {
     Write-Log "Restore exclude template not found at $RestoreExclude -- creating empty file." -Severity WARN
     Set-Content -Path $restoreExcludeDest -Value '' -Encoding UTF8
 }
-
-# Append Transwiz zip to restore exclusions
-Add-Content -Path $restoreExcludeDest -Value "$($script:UserToBackup).trans.zip" -Encoding UTF8
 
 # Do Not Restore directory
 $null = New-Item -ItemType Directory -Path (Join-Path $script:HostDir 'Do Not Restore') -Force
