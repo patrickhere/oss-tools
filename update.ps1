@@ -46,8 +46,9 @@ try {
 
     Copy-Item -Path "$($extracted.FullName)\*" -Destination $PSScriptRoot -Recurse -Force
     Write-Host "  updated to v$remoteVersion." -ForegroundColor Green
-    Write-Host "  re-run launcher.bat to use the new version." -ForegroundColor Green
+    Write-Host "  re-run the script to use the new version." -ForegroundColor Green
 }
+
 catch {
     # Unreachable or blocked -- silent, don't interrupt the tool
     Write-Host "  version $localVersion" -ForegroundColor DarkGray
@@ -59,5 +60,5 @@ finally {
 }
 
 Write-Host ""
-Read-Host "  press Enter to close (re-run launcher.bat after updating)"
-exit 0
+Read-Host "  press Enter to close"
+exit 2  # signal to caller: updated, do not continue

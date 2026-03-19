@@ -5,6 +5,10 @@ param([string]$Environment = "onprem", [string]$ClientName = "", [switch]$NonInt
 
 Write-Host "  BankOnIT OSS | Exchange Connectivity" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
+# update check -- silent if server is unreachable
+$_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
+if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+
 Write-Host ""
 Write-Host "  environment: $Environment" -ForegroundColor DarkGray
 

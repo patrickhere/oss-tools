@@ -3,6 +3,10 @@
 
 Write-Host "  BankOnIT OSS | Disable MS Account Sign-in" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
+# update check -- silent if server is unreachable
+$_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
+if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+
 
 # Check for admin
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
