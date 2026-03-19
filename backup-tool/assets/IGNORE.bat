@@ -12,7 +12,7 @@ call :ensureAdmin || goto end
 echo Setting variables...
 for /f "delims=" %%A in ('hostname') do set "hostname=%%A"
 pushd "%~dp0"
-for %%I in (.) do set old=%%~nxI
+for %%I in ("%~dp0.") do set old=%%~nI
 
 :newcomputer
 echo Creating New_Computer.txt...
