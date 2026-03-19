@@ -1,0 +1,1 @@
+Start-Process -FilePath "X:\BankOnIT\Belarc Advisor\advisorinstaller.exe" -Wait -ArgumentList '/silent'

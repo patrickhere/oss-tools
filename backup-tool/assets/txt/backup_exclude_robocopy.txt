@@ -1,0 +1,10 @@
+# Robocopy exclude list for Backup.ps1
+# Used by scripts\Backup.ps1 when copying the Public Desktop.
+# Original backup_exclude.txt is preserved for Backup_Hirens.bat (xcopy).
+#
+# Format:
+#   DIR:<pattern>   -- exclude directories matching this name/glob (/XD)
+#   FILE:<pattern>  -- exclude files matching this name/glob (/XF)
+#   Lines starting with # or blank lines are ignored.
+
+DIR:AppData
