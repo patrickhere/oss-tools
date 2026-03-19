@@ -51,8 +51,6 @@ $ExcludeFile    = Join-Path $TxtDir 'backup_exclude_robocopy.txt'
 $RestoreScript  = Join-Path $AssetsDir 'IGNORE.bat'
 $RestoreExclude = Join-Path $TxtDir 'IGNORE.txt'
 
-$BankOnITDir    = 'C:\BankOnIT'
-$BelarcDir      = Join-Path $BankOnITDir 'Belarc Advisor'
 $BelarcPaths    = @(
     "$env:ProgramFiles\Belarc\BelarcAdvisor\BelarcAdvisor.exe",
     "${env:ProgramFiles(x86)}\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
@@ -309,10 +307,8 @@ if (-not $destResult.Valid) {
 
 $BackupDestRoot = $resolvedDest
 $script:HostDir = Join-Path $BackupDestRoot $env:COMPUTERNAME
-$LogDir         = Join-Path $script:HostDir 'Logs'
 
 $null = New-Item -ItemType Directory -Path $script:HostDir -Force
-$null = New-Item -ItemType Directory -Path $LogDir -Force
 
 $script:LogPath = Join-Path $script:HostDir 'backuplog.txt'
 '' | Set-Content -Path $script:LogPath -Encoding UTF8  # create/truncate
@@ -345,35 +341,20 @@ if ($DoBelarc) {
     Write-Host ''
     Write-Log 'Starting Belarc Advisor workflow...'
 
-    # Stage installer
-    try {
-        $null = New-Item -ItemType Directory -Path $BelarcDir -Force
-    } catch {
-        Write-Log "Could not create Belarc staging directory $BelarcDir -- $_" -Severity WARN
-    }
-    if (Test-Path $BelarcInstaller) {
-        try { Copy-Item $BelarcInstaller $BelarcDir -Force } catch {
-            Write-Log "Could not copy Belarc installer to staging dir: $_" -Severity WARN
-        }
-    } else {
-        Write-Log "Belarc installer not found at $BelarcInstaller" -Severity WARN
-    }
-
     # Find or install BelarcAdvisor.exe
     $belarcExe = $BelarcPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
 
     if (-not $belarcExe) {
         Write-Log 'BelarcAdvisor.exe not found -- attempting silent installation...'
-        $installerInDir = Join-Path $BelarcDir (Split-Path $BelarcInstaller -Leaf)
-        if (Test-Path $installerInDir) {
+        if (Test-Path $BelarcInstaller) {
             try {
-                Start-Process -FilePath $installerInDir -ArgumentList '/S' -Wait -NoNewWindow
+                Start-Process -FilePath $BelarcInstaller -ArgumentList '/S' -Wait -NoNewWindow
                 Write-Log 'Belarc installer completed.'
             } catch {
                 Write-Log "Belarc installer failed: $_" -Severity WARN
             }
         } else {
-            Write-Log 'Belarc installer not available -- cannot install.' -Severity WARN
+            Write-Log "Belarc installer not found at $BelarcInstaller -- cannot install." -Severity WARN
         }
         $belarcExe = $BelarcPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
     }
