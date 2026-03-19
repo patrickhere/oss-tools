@@ -380,19 +380,37 @@ if ($DoBelarc) {
             Write-Log "Failed to launch Belarc: $_" -Severity WARN
         }
 
-        # Poll for report file
+        # Poll for report file -- search known fixed paths first, then fall back to
+        # a recursive scan under Belarc's install dirs (handles path changes across versions)
+        $belarcSearchRoots = @(
+            "$env:ProgramFiles\Belarc",
+            "${env:ProgramFiles(x86)}\Belarc",
+            "$env:ProgramData\Belarc"
+        )
         Write-Log "Waiting up to ${BelarcPollSecs}s for report to appear..."
         $deadline = (Get-Date).AddSeconds($BelarcPollSecs)
         $foundReport = $null
         while ((Get-Date) -lt $deadline -and -not $foundReport) {
+            # Try fixed known paths first (fast)
             $foundReport = $BelarcReportPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+            # Fall back: any .html recently written under Belarc dirs
+            if (-not $foundReport) {
+                $cutoff = $script:StartTime
+                $foundReport = $belarcSearchRoots |
+                    Where-Object { Test-Path $_ } |
+                    ForEach-Object { Get-ChildItem -Path $_ -Recurse -Filter '*.html' -ErrorAction SilentlyContinue } |
+                    Where-Object { $_.LastWriteTime -gt $cutoff } |
+                    Sort-Object LastWriteTime -Descending |
+                    Select-Object -First 1 -ExpandProperty FullName
+            }
             if (-not $foundReport) { Start-Sleep -Seconds $BelarcPollInterval }
         }
 
         if ($foundReport) {
             $destReport = Join-Path $script:HostDir "$env:COMPUTERNAME.html"
             Copy-Item $foundReport $destReport -Force
-            Write-Log "Belarc report saved to $destReport"
+            Write-Log "Belarc report found at: $foundReport"
+            Write-Log "Belarc report saved to: $destReport"
             $script:RanBelarc = $true
         } else {
             Write-Log "Belarc report not found after ${BelarcPollSecs}s -- scan may still be in progress." -Severity WARN

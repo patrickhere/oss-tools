@@ -1,6 +1,6 @@
 # BankOnIT Backup Utility
 
-Original script by **redacted**, maintained by **Patrick Hart**.  
+Original script by **redacted**, rewritten in PowerShell by **Patrick Hart**.
 Primary location for technicians: `R:\Travel Team\Tools\Backup\`
 
 ---
@@ -9,8 +9,8 @@ Primary location for technicians: `R:\Travel Team\Tools\Backup\`
 
 - **`Backup.bat` (root)**
   - Everyday use on a running Windows machine.
-  - Double-click → it will **auto-elevate** to admin.
-  - Calls `scripts\Backup.ps1` (full feature set, toggles, color output, logging).
+  - Double-click -- it will **auto-elevate** to admin.
+  - Calls `scripts\Backup.ps1` (color output, toggles, logging, summary).
 
 - **`scripts\Backup_Hirens.bat`**
   - When Windows **won't boot** or you're working from **Hiren's** / other rescue media.
@@ -19,88 +19,81 @@ Primary location for technicians: `R:\Travel Team\Tools\Backup\`
 
 ---
 
-## 2. Quick SOP (Standard Operating Procedure)
-
-### A. Normal Backup (`Backup.bat`)
+## 2. Quick SOP -- Normal Backup (`Backup.bat`)
 
 1. **Get the tool**
    - Browse to: `R:\Travel Team\Tools\Backup\`
    - Copy the entire `Backup` folder to your external drive.
 
 2. **Run**
-   - In the `Backup` folder, double-click `Backup.bat`.
-   - Accept the **UAC elevation** prompt, if it does.
+   - Double-click `Backup.bat` in the `Backup` folder.
+   - Accept the UAC elevation prompt.
 
-3. **Choose backup destination (optional)**
-   - Default: `Backups\` next to the script (or a path configured by IT).
-   - During the run, the script will show:
-
-     ```text
-     Backup destination root:
-       Current default: X:\SomePath
-     Override destination (leave blank to accept default):
-     ```
-
-   - **Press Enter** to accept the suggested path, or **type a new path** such as:
+3. **Choose backup destination**
+   - Default is `Backups\` next to the script. Press Enter to accept, or type a path:
      - `E:\Backups`
-     - `E:\Travel-Backups\%COMPUTERNAME%`
-     - `\\fileserver\BankOnIT\PC-Backups\%COMPUTERNAME%`
+     - `\\fileserver\BankOnIT\PC-Backups`
+   - The script validates the destination and warns if space is low.
 
-4. **Enter user + toggles**
-   - When prompted for user, leave blank to use current login.
-   - Optional components (defaults in brackets; just press Enter to accept):
-     - Run Belarc scan? `[Y]`
+4. **Select optional components**
+   - All default to Yes -- press Enter to accept each, or type `N` to skip:
+     - Run Belarc Advisor scan? `[Y]`
      - Launch Transwiz? `[Y]`
      - Copy Public Desktop? `[Y]`
      - Capture `ipconfig /all`? `[Y]`
 
-5. **Verify summary**
-   - At the end you'll see:
+5. **Belarc note**
+   - A browser window will open with the Belarc report -- this is expected.
+   - Leave it open. The script polls for the report file for up to 90 seconds then moves on.
 
-     ```text
-     ===== Backup Summary =====
-     Warnings logged : X
-     Errors logged   : Y
+6. **Transwiz note**
+   - Transwiz opens as a wizard. Work through it to completion.
+   - The script waits up to 30 minutes for it to finish.
+
+7. **Check the summary**
+   - At the end the script shows a color-coded summary:
+
+     ```
+     ==================================================
+       Component          Status
+       -----------------  -------
+       Belarc             RAN
+       Transwiz           RAN
+       Public Desktop     RAN
+       ipconfig           RAN
+       Restore Assets     RAN
+
+       Warnings : 0
+       Errors   : 0
+     ==================================================
      ```
 
    - **Errors must be 0** before you call it good.
-   - If `Warnings` or `Errors` are non-zero, open:
-     - `Backups\<COMPUTER_NAME>\backuplog.txt`
+   - Non-zero warnings or errors -- open `Backups\<COMPUTER_NAME>\backuplog.txt`.
 
-6. **What to hand off to engineering**
+8. **Hand off to engineering**
    - The entire `Backups\<COMPUTER_NAME>\` folder, or at minimum:
      - `backuplog.txt`
-     - `<COMPUTER_NAME>.html` (Belarc)
-     - `ipconfig.txt` (if captured)
+     - `<COMPUTER_NAME>.html` (Belarc report)
+     - `ipconfig.txt`
      - `Restore (run as admin).bat`
      - `restore_exclude.txt`
      - Any `.trans.zip` created by Transwiz
 
-### B. Hiren's / Offline Backup (`scripts\Backup_Hirens.bat`)
+---
+
+## 3. Hiren's / Offline Backup (`scripts\Backup_Hirens.bat`)
 
 1. Boot Hiren's or rescue media and ensure this `Backup` folder is available.
 2. Launch `scripts\Backup_Hirens.bat`.
-3. When asked:
-   - Enter **Windows drive** (usually `C`).
-   - Enter **username** to back up.
-4. Script will:
-   - Install/run Belarc, copy report.
-   - Copy Public Desktop from the selected drive.
-   - Run Transwiz.
-   - Capture `ipconfig /all`.
-   - Rename the backup folder based on the "old computer name" you provide.
-5. Results and log are under:
-   - `Backups\<hostname>\`
+3. When asked, enter the Windows drive letter (usually `C`) and the username to back up.
+4. Results and log are under `Backups\<hostname>\`.
 
 ---
 
-#
-  ```
+## 4. Notes
 
-Notes:
-
-- If **no destination is specified** and `BACKUP_DEST` is not set, the script defaults to:
-  - `./Backups/` under the `Backup` folder where you ran it.
-- For unstable disks or flakey USB, prefer:
-  - Local `Backups/` first, then copy results to `R:` or other storage afterward.
-
+- Destination can be a local path or UNC share (`\\server\share`). Both are validated before the run starts.
+- If `BACKUP_DEST` environment variable is set, it is used as the default destination.
+- For unstable disks or flaky USB drives, back up to local `Backups\` first, then copy to `R:` afterward.
+- Belarc cannot recover full M365/Office 365 product keys -- only the last 5 characters are shown. This is a Belarc limitation, not a script issue.
