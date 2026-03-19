@@ -1,7 +1,7 @@
 # diag.ps1
 # Tests Exchange/M365 connectivity based on the selected environment
 
-param([string]$Environment = "onprem", [string]$ClientName = "", [switch]$NonInteractive)
+param([string]$Environment = "onprem", [string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Exchange Connectivity" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -97,9 +97,9 @@ try {
         $output.Add("")
     }
 
-    $desktop = [Environment]::GetFolderPath("Desktop")
     $slug    = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
-    $outFile = "$desktop\OSS-connectivity$slug-$timestamp.txt"
+    $outDir  = if ($OutputDir) { $null = New-Item -ItemType Directory -Path $OutputDir -Force -ErrorAction SilentlyContinue; $OutputDir } else { [Environment]::GetFolderPath('Desktop') }
+    $outFile = Join-Path $outDir "OSS-connectivity$slug-$timestamp.txt"
     $output | Out-File $outFile -Encoding UTF8
 
     Write-Host ""

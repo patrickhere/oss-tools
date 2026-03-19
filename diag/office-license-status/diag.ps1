@@ -1,7 +1,7 @@
 # diag.ps1
 # Checks Office activation/license status via ospp.vbs and saves output to desktop
 
-param([string]$ClientName = "", [switch]$NonInteractive)
+param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Office License Status" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -37,8 +37,8 @@ try {
 
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
     $slug      = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
-    $desktop   = [Environment]::GetFolderPath("Desktop")
-    $outFile   = "$desktop\OSS-license$slug-$timestamp.txt"
+    $outDir    = if ($OutputDir) { $null = New-Item -ItemType Directory -Path $OutputDir -Force -ErrorAction SilentlyContinue; $OutputDir } else { [Environment]::GetFolderPath('Desktop') }
+    $outFile   = Join-Path $outDir "OSS-license$slug-$timestamp.txt"
 
     $output = @(
         "BankOnIT OSS | Office License Status",

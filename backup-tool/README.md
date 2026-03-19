@@ -23,9 +23,24 @@
 
 ---
 
+## running a restore
+
+the backup folder contains `Restore (run as admin).bat` and `Restore.ps1`. run the .bat from wherever the backup lives -- local drive, USB, or UNC share (`\\pc-name\c$\...`).
+
+1. on the new PC, navigate to the backup folder.
+2. double-click `Restore (run as admin).bat`, accept UAC.
+3. hit enter through the component prompts (all default to Y except local staging).
+4. **local staging** (default N) -- robocopy's the entire backup folder to `C:\BankOnIT\Restore\<pc-name>\` before restoring. useful for large profiles or slow network links. not needed on a fast LAN.
+5. Transwiz opens as a wizard -- point it at the `.trans.zip` in the source folder and work through it.
+6. browser bookmarks (Edge, Chrome) are restored automatically. Firefox bookmarks are copied to `C:\BankOnIT\Firefox\<username>\` -- import manually via Firefox > Bookmarks > Manage Bookmarks > Import and Backup > Restore.
+7. old computer files (Belarc report, ipconfig, MappedDrives.reg) are moved to `C:\BankOnIT\Old Computer\`.
+8. check the summary. restore log is at `C:\BankOnIT\restorelog.txt`.
+
+---
+
 ## notes
 
-- UNC paths work as destinations -- the script validates write access before starting.
+- UNC paths work as both backup destinations and restore sources -- no copy step needed.
 - set `BACKUP_DEST` as an environment variable to override the default destination without typing it every time.
 - Belarc can only recover the last 5 characters of M365 product keys -- this is a Belarc limitation.
 - for flaky USB drives, back up locally first then copy to `R:` after.

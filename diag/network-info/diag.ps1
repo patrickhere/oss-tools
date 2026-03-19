@@ -1,7 +1,7 @@
 # diag.ps1
 # Dumps active network adapter info in a readable format and saves to desktop
 
-param([string]$ClientName = "", [switch]$NonInteractive)
+param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Network Info" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -79,8 +79,8 @@ try {
 
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
     $slug      = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
-    $desktop   = [Environment]::GetFolderPath("Desktop")
-    $outFile   = "$desktop\OSS-network$slug-$timestamp.txt"
+    $outDir    = if ($OutputDir) { $null = New-Item -ItemType Directory -Path $OutputDir -Force -ErrorAction SilentlyContinue; $OutputDir } else { [Environment]::GetFolderPath('Desktop') }
+    $outFile   = Join-Path $outDir "OSS-network$slug-$timestamp.txt"
 
     $output | Out-File $outFile -Encoding UTF8
 

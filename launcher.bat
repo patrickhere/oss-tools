@@ -112,7 +112,8 @@ if /i "%choice%"=="Q"  exit /b
 goto MENU
 
 :LOG
-echo %DATE% %TIME:~0,8% ^| %COMPUTERNAME% ^| %CLIENTNAME% ^| %OSSENV% ^| %LOGSCRIPT% >> "%USERPROFILE%\Desktop\OSS-session-log.txt"
+if not exist "%~dp0Logs\" mkdir "%~dp0Logs"
+echo %DATE% %TIME:~0,8% ^| %COMPUTERNAME% ^| %CLIENTNAME% ^| %OSSENV% ^| %LOGSCRIPT% >> "%~dp0Logs\OSS-session-log.txt"
 goto %LOGBACK%
 
 :RUN_AUTODISCOVER
@@ -208,50 +209,50 @@ goto MENU
 :RUN_SNAPSHOT
 set LOGSCRIPT=system-snapshot & set LOGBACK=RUN_SNAPSHOT_GO & goto LOG
 :RUN_SNAPSHOT_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_EXCHCONN
 set LOGSCRIPT=exchange-connectivity & set LOGBACK=RUN_EXCHCONN_GO & goto LOG
 :RUN_EXCHCONN_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_OUTLOOKDUMP
 set LOGSCRIPT=outlook-config-dump & set LOGBACK=RUN_OUTLOOKDUMP_GO & goto LOG
 :RUN_OUTLOOKDUMP_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_LICENSE
 set LOGSCRIPT=office-license-status & set LOGBACK=RUN_LICENSE_GO & goto LOG
 :RUN_LICENSE_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_EVENTLOG
 set LOGSCRIPT=event-log-errors & set LOGBACK=RUN_EVENTLOG_GO & goto LOG
 :RUN_EVENTLOG_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_NETINFO
 set LOGSCRIPT=network-info & set LOGBACK=RUN_NETINFO_GO & goto LOG
 :RUN_NETINFO_GO
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1" -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs"
 goto MENU
 
 :RUN_ALL_DIAG
 set LOGSCRIPT=run-all-diag & set LOGBACK=RUN_ALL_DIAG_GO & goto LOG
 :RUN_ALL_DIAG_GO
-echo running all diag tools -- output files will appear on your desktop.
+echo running all diag tools -- output files will appear in the Logs folder.
 echo.
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1"       -ClientName "%CLIENTNAME%" -NonInteractive
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%" -NonInteractive
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1"   -ClientName "%CLIENTNAME%" -NonInteractive
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%" -NonInteractive
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1"      -ClientName "%CLIENTNAME%" -NonInteractive
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1"          -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1"       -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1"   -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1"      -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1"          -ClientName "%CLIENTNAME%" -OutputDir "%~dp0Logs" -NonInteractive
 echo.
 echo all diag tools complete.
 pause

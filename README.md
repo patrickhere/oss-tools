@@ -58,7 +58,7 @@ to package it as a zip for sharing, run `package.bat` -> drops a zip on your des
 
 ### diag
 
-run these first if you're not sure what you're dealing with. output saves to a timestamped `.txt` file on the desktop, named with the client name you entered at startup.
+run these first if you're not sure what you're dealing with. output saves to a timestamped `.txt` file in the `Logs\` folder next to `launcher.bat`, named with the client name you entered at startup.
 
 | # | tool | what it does |
 |---|------|--------------|
@@ -68,13 +68,13 @@ run these first if you're not sure what you're dealing with. output saves to a t
 | D4 | office license status | checks office activation state via ospp.vbs |
 | D5 | event log errors | pulls the last 100 errors from application and system logs (past 24h) |
 | D6 | network info | ip, gateway, dns servers, dhcp status, and lease info for active adapters |
-| DA | run all diag | runs d1-d6 in sequence and drops all output files on the desktop |
+| DA | run all diag | runs d1-d6 in sequence, all output files go to `Logs\` |
 
 ---
 
 ## session log
 
-every tool you run gets logged to `OSS-session-log.txt` on the desktop:
+every tool you run gets logged to `Logs\OSS-session-log.txt` in the toolkit folder:
 
 ```
 2026-03-18 14:23:11 | WORKSTATION01 | FirstNational-Downtown | onprem | system-snapshot

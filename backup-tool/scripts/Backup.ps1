@@ -50,7 +50,8 @@ $TranswizExe    = Join-Path $BinDir 'Transwiz_free.exe'
 $TranswizConfig = Join-Path $BinDir 'Transwiz.config'
 $BelarcInstaller = Join-Path $BinDir 'advisorinstaller.exe'
 $ExcludeFile    = Join-Path $TxtDir 'backup_exclude_robocopy.txt'
-$RestoreScript  = Join-Path $AssetsDir 'IGNORE.bat'
+$RestoreBat     = Join-Path $AssetsDir 'Restore.bat'
+$RestorePs1     = Join-Path $AssetsDir 'Restore.ps1'
 $RestoreExclude = Join-Path $TxtDir 'IGNORE.txt'
 
 $BelarcPaths    = @(
@@ -597,11 +598,16 @@ if ($DoBrowserData) {
 Write-Host ''
 Write-Log 'Staging restore assets...'
 
-# Restore batch
-if (Test-Path $RestoreScript) {
-    Copy-Item $RestoreScript (Join-Path $script:HostDir 'Restore (run as admin).bat') -Force
+# Restore scripts
+if (Test-Path $RestoreBat) {
+    Copy-Item $RestoreBat (Join-Path $script:HostDir 'Restore (run as admin).bat') -Force
 } else {
-    Write-Log "Restore script template not found at $RestoreScript" -Severity WARN
+    Write-Log "Restore.bat not found at $RestoreBat" -Severity WARN
+}
+if (Test-Path $RestorePs1) {
+    Copy-Item $RestorePs1 (Join-Path $script:HostDir 'Restore.ps1') -Force
+} else {
+    Write-Log "Restore.ps1 not found at $RestorePs1" -Severity WARN
 }
 
 # Restore exclude list
