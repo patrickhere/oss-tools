@@ -20,6 +20,22 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# Global trap -- catch any unhandled terminating error, log it, then show summary
+trap {
+    $errMsg = $_.Exception.Message
+    $errLine = $_.InvocationInfo.ScriptLineNumber
+    if ($script:LogPath) {
+        $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+        Add-Content -Path $script:LogPath -Value "[$stamp] [ERROR] Unhandled error at line ${errLine}: $errMsg" -Encoding UTF8
+    }
+    Write-Host ''
+    Write-Host "[ERROR] Script stopped at line ${errLine}: $errMsg" -ForegroundColor Red
+    Write-Host "        Check $($script:LogPath) for details." -ForegroundColor Red
+    Write-Host ''
+    Read-Host 'Press Enter to close'
+    exit 1
+}
+
 # ---------------------------------------------------------------------------
 # CONFIG -- all paths and thresholds defined here
 # ---------------------------------------------------------------------------
@@ -240,15 +256,19 @@ if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Adm
 # ---------------------------------------------------------------------------
 $banner = @'
 
-  ██████╗  █████╗ ███╗   ██╗██╗  ██╗ ██████╗ ███╗   ██╗██╗████████╗
-  ██╔══██╗██╔══██╗████╗  ██║██║ ██╔╝██╔═══██╗████╗  ██║██║╚══██╔══╝
-  ██████╔╝███████║██╔██╗ ██║█████╔╝ ██║   ██║██╔██╗ ██║██║   ██║
-  ██╔══██╗██╔══██║██║╚██╗██║██╔═██╗ ██║   ██║██║╚██╗██║██║   ██║
-  ██████╔╝██║  ██║██║ ╚████║██║  ██╗╚██████╔╝██║ ╚████║██║   ██║
-  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝   ╚═╝
+  ==================================================
+    ____              _     ___       ___ _____
+   | __ )  __ _ _ __ | | __/ _ \ _ _|_ _|_   _|
+   |  _ \ / _` | '_ \| |/ / | | | '_ \| |  | |
+   | |_) | (_| | | | |   <| |_| | | | | |  | |
+   |____/ \__,_|_| |_|_|\_\\___/|_| |_|___| |_|
 
-  BankOnIT Backup Utility  |  PowerShell Edition
-  Computer: {0}  |  {1}
+    BankOnIT Backup Utility  --  PowerShell Edition
+    Patrick Hart -- hartforge.dev
+  ==================================================
+  Computer : {0}
+  Date     : {1}
+  ==================================================
 
 '@
 Write-Host ($banner -f $env:COMPUTERNAME, (Get-Date -Format 'yyyy-MM-dd HH:mm')) -ForegroundColor Cyan
@@ -304,12 +324,8 @@ Write-Log "Host backup dir: $($script:HostDir)"
 # ---------------------------------------------------------------------------
 # PHASE 3: PROMPTS + TOGGLES
 # ---------------------------------------------------------------------------
-Write-Host ''
-Write-Host 'Enter the username to back up.' -ForegroundColor White
-Write-Host "  Leave blank to use current user ($env:USERNAME): " -NoNewline
-$userInput = Read-Host
-$script:UserToBackup = if ([string]::IsNullOrWhiteSpace($userInput)) { $env:USERNAME } else { $userInput.Trim() }
-Write-Log "Backing up profile for user: $($script:UserToBackup)"
+$script:UserToBackup = $env:USERNAME
+Write-Log "Current user: $($script:UserToBackup)"
 
 Write-Host ''
 Write-Host 'Optional components (press Enter to accept default):' -ForegroundColor White
@@ -331,9 +347,15 @@ if ($DoBelarc) {
     Write-Log 'Starting Belarc Advisor workflow...'
 
     # Stage installer
-    $null = New-Item -ItemType Directory -Path $BelarcDir -Force
+    try {
+        $null = New-Item -ItemType Directory -Path $BelarcDir -Force
+    } catch {
+        Write-Log "Could not create Belarc staging directory $BelarcDir -- $_" -Severity WARN
+    }
     if (Test-Path $BelarcInstaller) {
-        Copy-Item $BelarcInstaller $BelarcDir -Force
+        try { Copy-Item $BelarcInstaller $BelarcDir -Force } catch {
+            Write-Log "Could not copy Belarc installer to staging dir: $_" -Severity WARN
+        }
     } else {
         Write-Log "Belarc installer not found at $BelarcInstaller" -Severity WARN
     }
