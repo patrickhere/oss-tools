@@ -44,6 +44,31 @@ REM echo Moving Outlook Data file (if present) to %SYSTEMDRIVE%\Users\%user%.old
 REM IF EXIST "%SYSTEMDRIVE%\Users\%user%.old\AppData\Local\Outlook" THEN move "%SYSTEMDRIVE%\Users\%user%.old\AppData\Local\Outlook\*.*" "%SYSTEMDRIVE%\Users\%user%.old\Documents\Outlook Files" ELSE echo No Outlook files were found.
 REM IF EXIST "%SYSTEMDRIVE%\Users\%user%.old\Documents\Outlook Files\" THEN echo Remember to re-import the PST file after you have run through Outlook setup. (Or just replace it in %LOCALAPPDATA%\Microsoft\Outlook) && timeout /T 5
 
+:browsers
+echo Restoring browser bookmarks...
+if not exist "Browsers\" (
+    echo No browser bookmarks in backup -- skipping.
+    goto cleanup
+)
+for /d %%U in ("Browsers\*") do (
+    if exist "%%U\Edge\Bookmarks" (
+        md "%SYSTEMDRIVE%\Users\%%~nxU\AppData\Local\Microsoft\Edge\User Data\Default" 2>nul
+        copy /Y "%%U\Edge\Bookmarks" "%SYSTEMDRIVE%\Users\%%~nxU\AppData\Local\Microsoft\Edge\User Data\Default\Bookmarks" >nul
+        echo Edge bookmarks restored for %%~nxU
+    )
+    if exist "%%U\Chrome\Bookmarks" (
+        md "%SYSTEMDRIVE%\Users\%%~nxU\AppData\Local\Google\Chrome\User Data\Default" 2>nul
+        copy /Y "%%U\Chrome\Bookmarks" "%SYSTEMDRIVE%\Users\%%~nxU\AppData\Local\Google\Chrome\User Data\Default\Bookmarks" >nul
+        echo Chrome bookmarks restored for %%~nxU
+    )
+    if exist "%%U\Firefox\places.sqlite" (
+        md "%SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU" 2>nul
+        copy /Y "%%U\Firefox\places.sqlite" "%SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU\places.sqlite" >nul
+        echo Firefox bookmarks for %%~nxU copied to %SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU
+        echo   To restore: Firefox ^> Bookmarks ^> Manage Bookmarks ^> Import and Backup ^> Restore
+    )
+)
+
 :cleanup
 echo "Moving Old Computer info to %SYSTEMDRIVE%\BankOnIT\Old Computer..."
 pushd %SYSTEMDRIVE%\Users
