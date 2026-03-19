@@ -1,7 +1,7 @@
 # diag.ps1
 # Exports Outlook-related registry keys to a text file on the desktop
 
-param([string]$ClientName = "")
+param([string]$ClientName = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Outlook Config Dump" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -70,4 +70,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

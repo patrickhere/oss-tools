@@ -1,7 +1,7 @@
 # diag.ps1
 # Dumps active network adapter info in a readable format and saves to desktop
 
-param([string]$ClientName = "")
+param([string]$ClientName = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Network Info" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -50,10 +50,9 @@ try {
             $output.Add("  DHCP:   $(if ($isDhcp) { 'yes' } else { 'no (static)' })")
 
             if ($isDhcp) {
-                $dhcpDetail = Get-DhcpServerInDC -ErrorAction SilentlyContinue
-                $netInfo = Get-NetIPAddress -InterfaceIndex $adapter.InterfaceIndex -AddressFamily IPv4 |
+                $netInfo = Get-NetIPAddress -InterfaceIndex $adapter.InterfaceIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue |
                     Select-Object -First 1
-                if ($netInfo.ValidLifetime) {
+                if ($netInfo -and $netInfo.ValidLifetime -and $netInfo.ValidLifetime -ne [TimeSpan]::MaxValue) {
                     $expires = (Get-Date).Add($netInfo.ValidLifetime)
                     $output.Add("  Lease:  expires $($expires.ToString('yyyy-MM-dd HH:mm'))")
                 }
@@ -90,4 +89,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

@@ -1,7 +1,7 @@
 # fix.ps1
 # Configures Outlook autodiscover registry keys for on-prem, M365, or hybrid
 
-param([string]$Environment = "onprem")
+param([ValidateSet('onprem','m365','hybrid')][string]$Environment = "onprem")
 
 Write-Host "  BankOnIT OSS | Outlook Autodiscover Fix" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray

@@ -36,7 +36,7 @@ try {
         exit 0
     }
 
-    $profiles = Get-ChildItem -Path $profilesPath | Select-Object -ExpandProperty PSChildName
+    $profiles = @(Get-ChildItem -Path $profilesPath | Select-Object -ExpandProperty PSChildName)
 
     if ($profiles.Count -eq 0) {
         Write-Host ""

@@ -1,7 +1,7 @@
 # diag.ps1
 # Tests Exchange/M365 connectivity based on the selected environment
 
-param([string]$Environment = "onprem", [string]$ClientName = "")
+param([string]$Environment = "onprem", [string]$ClientName = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Exchange Connectivity" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -20,16 +20,16 @@ try {
 
     function Test-Port {
         param([string]$Host, [int]$Port)
+        $tcp = New-Object System.Net.Sockets.TcpClient
         try {
-            $tcp = New-Object System.Net.Sockets.TcpClient
             $conn = $tcp.BeginConnect($Host, $Port, $null, $null)
             $wait = $conn.AsyncWaitHandle.WaitOne(3000, $false)
-            if ($wait -and !$tcp.Client.Connected) { return $false }
+            if (-not $wait) { return $false }
             $tcp.EndConnect($conn)
-            $tcp.Close()
-            return $wait
+            return $tcp.Connected
         }
         catch { return $false }
+        finally { $tcp.Close() }
     }
 
     function Write-Result {
@@ -107,4 +107,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

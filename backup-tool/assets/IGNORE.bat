@@ -28,8 +28,12 @@ echo Restoring User Profiles back to system...
 echo Running Transwiz.exe
 Transwiz.exe
 if not exist Logs mkdir Logs
-xcopy *.* "%SYSTEMDRIVE%\Users" /C /E /I /Y /EXCLUDE:restore_exclude.txt >> Logs\restorelog.txt
-copy Logs\restorelog.txt %SYSTEMDRIVE%\BankOnIT\restorelog.txt
+REM Only restore the Public subfolder -- restoring *.* from the backup root would
+REM put logs, HTML reports, and restore scripts into C:\Users.
+if exist "Public" (
+    xcopy "Public\*.*" "%SYSTEMDRIVE%\Users\Public" /C /E /I /Y /EXCLUDE:restore_exclude.txt >> Logs\restorelog.txt
+)
+copy Logs\restorelog.txt %SYSTEMDRIVE%\BankOnIT\restorelog.txt 2>nul
 
 REM echo Now getting moving outlook profile for one user to Documents\Outlook Files.
 REM echo If this doesn't need to be done, or no one has outlook, just press enter.

@@ -1,1 +1,1 @@
-Start-Process -FilePath "C:\BankOnIT\Belarc Advisor\advisorinstaller.exe" -Wait -ArgumentList '/S'
+Start-Process -FilePath "$env:SystemDrive\BankOnIT\Belarc Advisor\advisorinstaller.exe" -Wait -ArgumentList '/S'

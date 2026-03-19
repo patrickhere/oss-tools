@@ -232,12 +232,12 @@ set LOGSCRIPT=run-all-diag & set LOGBACK=RUN_ALL_DIAG_GO & goto LOG
 :RUN_ALL_DIAG_GO
 echo running all diag tools -- output files will appear on your desktop.
 echo.
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1"       -ClientName "%CLIENTNAME%"
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%"
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1"   -ClientName "%CLIENTNAME%"
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%"
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1"      -ClientName "%CLIENTNAME%"
-powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1"          -ClientName "%CLIENTNAME%"
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\system-snapshot\diag.ps1"       -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\exchange-connectivity\diag.ps1" -Environment "%OSSENV%" -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\outlook-config-dump\diag.ps1"   -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\office-license-status\diag.ps1" -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\event-log-errors\diag.ps1"      -ClientName "%CLIENTNAME%" -NonInteractive
+powershell -ExecutionPolicy Bypass -File "%~dp0diag\network-info\diag.ps1"          -ClientName "%CLIENTNAME%" -NonInteractive
 echo.
 echo all diag tools complete.
 pause

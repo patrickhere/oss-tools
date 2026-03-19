@@ -34,22 +34,34 @@ try {
     # Office license cache
     $licensePath = "$env:LOCALAPPDATA\Microsoft\Office\16.0\Licensing"
     if (Test-Path $licensePath) {
-        Remove-Item -Path "$licensePath\*" -Recurse -Force -ErrorAction SilentlyContinue
-        $cleared += "Office license cache ($licensePath)"
+        try {
+            Remove-Item -Path "$licensePath\*" -Recurse -Force -ErrorAction Stop
+            $cleared += "Office license cache ($licensePath)"
+        } catch {
+            $failed += "Office license cache ($licensePath) -- $($_.Exception.Message)"
+        }
     }
 
     # Office identity/token cache in registry
     $identityPath = "HKCU:\Software\Microsoft\Office\16.0\Common\Identity\Identities"
     if (Test-Path $identityPath) {
-        Remove-Item -Path $identityPath -Recurse -Force -ErrorAction SilentlyContinue
-        $cleared += "Office identity registry cache"
+        try {
+            Remove-Item -Path $identityPath -Recurse -Force -ErrorAction Stop
+            $cleared += "Office identity registry cache"
+        } catch {
+            $failed += "Office identity registry cache -- $($_.Exception.Message)"
+        }
     }
 
     # Token broker cache
     $tokenPath = "$env:LOCALAPPDATA\Microsoft\TokenBroker\Cache"
     if (Test-Path $tokenPath) {
-        Remove-Item -Path "$tokenPath\*" -Recurse -Force -ErrorAction SilentlyContinue
-        $cleared += "Token broker cache ($tokenPath)"
+        try {
+            Remove-Item -Path "$tokenPath\*" -Recurse -Force -ErrorAction Stop
+            $cleared += "Token broker cache ($tokenPath)"
+        } catch {
+            $failed += "Token broker cache ($tokenPath) -- $($_.Exception.Message)"
+        }
     }
 
     Write-Host ""
@@ -59,6 +71,11 @@ try {
     }
     else {
         Write-Host "INFO: No cache locations found -- nothing to clear." -ForegroundColor Yellow
+    }
+    if ($failed.Count -gt 0) {
+        Write-Host ""
+        Write-Host "WARNING: $($failed.Count) location(s) could not be cleared (files may be locked):" -ForegroundColor Yellow
+        $failed | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
     }
     Write-Host "Sign back in to Office after reopening."
 }

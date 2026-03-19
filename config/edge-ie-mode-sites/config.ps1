@@ -81,6 +81,8 @@ while ($true) {
     $action = Read-Host "select"
 
     if ($action -match '^[Qq]$') {
+        # Always save on quit so the policy-referenced file exists even if no sites were added
+        Save-SiteList $xml
         break
     }
     elseif ($action -match '^[Aa]$') {

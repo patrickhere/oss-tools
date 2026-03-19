@@ -187,7 +187,7 @@ function Resolve-BackupDestination {
 # ---------------------------------------------------------------------------
 function Show-Summary {
     $elapsed = (Get-Date) - $script:StartTime
-    $elapsedStr = '{0:mm}:{0:ss}' -f $elapsed
+    $elapsedStr = '{0:hh}:{0:mm}:{0:ss}' -f $elapsed
 
     $sep = '=' * 50
     Write-Host ''

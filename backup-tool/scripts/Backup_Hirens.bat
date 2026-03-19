@@ -59,10 +59,10 @@ if exist "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor" (
     ) else (
         call :log "WARNING: Belarc advisorinstaller.exe missing at %BIN_DIR%advisorinstaller.exe"
     )
-    if exist "%BIN_DIR%Start_Belarc_Hirens.ps1" (
-        powershell -ExecutionPolicy Bypass -File "%BIN_DIR%Start_Belarc_Hirens.ps1" >> "%LOG_PATH" 2>&1
+    if exist "%BIN_DIR%Start_Belarc.ps1" (
+        powershell -ExecutionPolicy Bypass -File "%BIN_DIR%Start_Belarc.ps1" >> "%LOG_PATH%" 2>&1
     ) else (
-        call :log "WARNING: Start_Belarc_Hirens.ps1 missing at %BIN_DIR%Start_Belarc_Hirens.ps1"
+        call :log "WARNING: Start_Belarc.ps1 missing at %BIN_DIR%Start_Belarc.ps1"
     )
 )
 
@@ -130,7 +130,7 @@ set /p hostname="Hostname of Old Computer:"
 IF "%hostname%"=="" for /f "delims=" %%A in ('hostname') do set "hostname=%%A"
 echo Old Hostname: %oldhostname%
 echo New Hostname: %hostname%
-rename %oldhostname% %hostname%
+rename "%oldhostname%" "%hostname%"
 rename "%hostname%\%oldhostname%.html" "%hostname%.html"
 
 echo.

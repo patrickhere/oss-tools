@@ -29,6 +29,8 @@ try {
         }
     }
 
+    $targets = $targets | Sort-Object -Unique
+
     if ($targets.Count -eq 0) {
         Write-Host ""
         Write-Host "INFO: No matching credentials found." -ForegroundColor Yellow

@@ -18,10 +18,18 @@ try {
     Write-Host "INFO: Stopping print spooler..." -ForegroundColor Yellow
     Stop-Service -Name Spooler -Force -ErrorAction Stop
 
-    Write-Host "INFO: Clearing spool queue..." -ForegroundColor Yellow
+    Write-Host "INFO: Checking spool queue..." -ForegroundColor Yellow
     $spoolPath = "$env:SystemRoot\System32\spool\PRINTERS"
     $files = Get-ChildItem -Path $spoolPath -ErrorAction SilentlyContinue
     if ($files) {
+        Write-Host "WARNING: $($files.Count) queued print job(s) will be permanently deleted." -ForegroundColor Yellow
+        $confirm = Read-Host "Continue? (Y/N)"
+        if ($confirm -notmatch '^[Yy]$') {
+            Start-Service -Name Spooler -ErrorAction SilentlyContinue
+            Write-Host "INFO: Aborted. Spooler restarted without clearing queue." -ForegroundColor Yellow
+            Read-Host "Press Enter to close"
+            exit 0
+        }
         Remove-Item -Path "$spoolPath\*" -Force -Recurse -ErrorAction SilentlyContinue
         Write-Host "INFO: $($files.Count) spool file(s) removed." -ForegroundColor Yellow
     }

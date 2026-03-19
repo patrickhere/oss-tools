@@ -1,7 +1,7 @@
 # diag.ps1
 # Pulls the last 100 Application and System errors from the past 24 hours and saves to desktop
 
-param([string]$ClientName = "")
+param([string]$ClientName = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Event Log Errors" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -60,4 +60,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

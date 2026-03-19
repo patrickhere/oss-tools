@@ -1,7 +1,7 @@
 # diag.ps1
 # Checks Office activation/license status via ospp.vbs and saves output to desktop
 
-param([string]$ClientName = "")
+param([string]$ClientName = "", [switch]$NonInteractive)
 
 Write-Host "  BankOnIT OSS | Office License Status" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
@@ -19,7 +19,7 @@ try {
         Write-Host ""
         Write-Host "ERROR: ospp.vbs not found. Office may not be installed or is a non-standard install." -ForegroundColor Red
         Write-Host ""
-        Read-Host "Press Enter to close"
+        if (-not $NonInteractive) { Read-Host "Press Enter to close" }
         exit 1
     }
 
@@ -55,4 +55,4 @@ catch {
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }
