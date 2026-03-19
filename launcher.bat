@@ -9,10 +9,24 @@ if %errorLevel% NEQ 0 (
     exit /b
 )
 
+:: Read local version
+set OSSVER=unknown
+if exist "%~dp0version.txt" set /p OSSVER=<"%~dp0version.txt"
+
+:: Check for updates (fails silently if server unreachable)
+cls
+echo ============================================================
+echo  BankOnIT OSS Toolkit  v%OSSVER%
+echo  patrick hart - hartforge.dev
+echo ============================================================
+echo.
+powershell -ExecutionPolicy Bypass -File "%~dp0update.ps1"
+if %ERRORLEVEL% neq 0 goto :EOF
+
 :SELECT_ENV
 cls
 echo ============================================================
-echo  BankOnIT OSS Toolkit  v1.2
+echo  BankOnIT OSS Toolkit  v%OSSVER%
 echo  patrick hart - hartforge.dev
 echo ============================================================
 echo.
