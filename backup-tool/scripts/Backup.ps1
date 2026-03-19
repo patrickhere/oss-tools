@@ -30,7 +30,9 @@ trap {
     }
     Write-Host ''
     Write-Host "[ERROR] Script stopped at line ${errLine}: $errMsg" -ForegroundColor Red
-    Write-Host "        Check $($script:LogPath) for details." -ForegroundColor Red
+    if ($script:LogPath) {
+        Write-Host "        Check $($script:LogPath) for details." -ForegroundColor Red
+    }
     Write-Host ''
     Read-Host 'Press Enter to close'
     exit 1
@@ -56,6 +58,7 @@ $BelarcPaths    = @(
     "${env:ProgramFiles(x86)}\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 )
 $BelarcReportPaths = @(
+    # Belarc names its report files with literal parentheses: (COMPUTERNAME).html
     "$env:ProgramFiles\Belarc\BelarcAdvisor\System\tmp\($env:COMPUTERNAME).html",
     "${env:ProgramFiles(x86)}\Belarc\BelarcAdvisor\System\tmp\($env:COMPUTERNAME).html",
     "$env:ProgramData\Belarc\BelarcAdvisor\System\tmp\($env:COMPUTERNAME).html"
@@ -157,12 +160,17 @@ function Resolve-BackupDestination {
     }
 
     # Write access test
+    $dirCreated = $false
     try {
         $testFile = Join-Path $Path ('.baktest_' + [System.IO.Path]::GetRandomFileName())
-        $null = New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop
+        if (-not (Test-Path $Path)) {
+            $null = New-Item -ItemType Directory -Path $Path -Force -ErrorAction Stop
+            $dirCreated = $true
+        }
         [System.IO.File]::WriteAllText($testFile, 'ok')
         Remove-Item $testFile -Force -ErrorAction SilentlyContinue
     } catch {
+        if ($dirCreated) { Remove-Item $Path -Force -ErrorAction SilentlyContinue }
         $msg = switch -Regex ($_.ToString()) {
             'network path|unreachable|not found' { "Cannot reach $Path -- check network connection" }
             'Access.*denied|unauthorized'         { "Access denied to $Path -- check credentials or share permissions" }
@@ -366,7 +374,11 @@ if ($DoBelarc) {
         Write-Host '  A browser window will open with the Belarc report -- this is expected.' -ForegroundColor DarkGray
         Write-Host '  Leave the browser open until the script continues.' -ForegroundColor DarkGray
 
-        Start-Process -FilePath $belarcExe
+        try {
+            Start-Process -FilePath $belarcExe
+        } catch {
+            Write-Log "Failed to launch Belarc: $_" -Severity WARN
+        }
 
         # Poll for report file
         Write-Log "Waiting up to ${BelarcPollSecs}s for report to appear..."
@@ -404,6 +416,7 @@ if ($DoTranswiz) {
             $proc = Start-Process -FilePath $TranswizExe -PassThru
             # 30 minute timeout -- Transwiz is interactive but should not block indefinitely
             $finished = $proc.WaitForExit(1800000)
+            if ($finished) { $proc.WaitForExit() }  # flush async event handling so ExitCode is reliable
             if (-not $finished) {
                 Write-Log 'Transwiz did not exit within 30 minutes -- continuing anyway.' -Severity WARN
             } elseif ($proc.ExitCode -ne 0) {
@@ -474,13 +487,18 @@ if ($DoPublicDesktop) {
         # Temporarily allow non-terminating errors so robocopy stderr output
         # does not trigger $ErrorActionPreference = 'Stop' before we check $LASTEXITCODE
         $savedEAP = $ErrorActionPreference
-        $ErrorActionPreference = 'Continue'
-        & robocopy @roboArgs | Out-Null
-        $robocopyExit = $LASTEXITCODE
-        $ErrorActionPreference = $savedEAP
+        $robocopyExit = 0
+        $roboOutput   = $null
+        try {
+            $ErrorActionPreference = 'Continue'
+            $roboOutput   = & robocopy @roboArgs 2>&1
+            $robocopyExit = $LASTEXITCODE
+        } finally {
+            $ErrorActionPreference = $savedEAP
+        }
 
         if ($robocopyExit -ge 8) {
-            Write-Log "robocopy failed with exit code $robocopyExit" -Severity ERROR
+            Write-Log "robocopy failed with exit code $robocopyExit -- $($roboOutput -join ' | ')" -Severity ERROR
         } else {
             Write-Log "Public Desktop copied (robocopy exit $robocopyExit)"
             $script:RanPublicDesktop = $true
