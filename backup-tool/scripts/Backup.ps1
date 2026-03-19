@@ -121,7 +121,7 @@ function Read-Toggle {
     )
     $hint = if ($Default) { 'Y' } else { 'N' }
     while ($true) {
-        Write-Host "$Prompt? [$hint]: " -ForegroundColor White -NoNewline
+        Write-Host "$($Prompt)? [$hint]: " -ForegroundColor White -NoNewline
         $raw = Read-Host
         if ([string]::IsNullOrWhiteSpace($raw)) { return $Default }
         $val = $raw.Trim().Substring(0,1).ToUpper()
