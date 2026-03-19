@@ -1,8 +1,5 @@
 # bankonit backup tool
 
-PowerShell rewrite of the original batch script by redacted.
-Primary location: `R:\Travel Team\Tools\Backup\`
-
 ---
 
 ## which script to use
