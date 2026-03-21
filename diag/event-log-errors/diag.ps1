@@ -3,11 +3,11 @@
 
 param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
 
+. (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
+
 Write-Host "  BankOnIT OSS | Event Log Errors" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
-# update check -- silent if server is unreachable
-$_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
-if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+Invoke-UpdateCheck
 
 
 try {
@@ -49,9 +49,7 @@ try {
     }
 
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
-    $slug      = if ($ClientName) { "-$($ClientName -replace '[^a-zA-Z0-9\-]','-')" } else { "" }
-    $outDir    = if ($OutputDir) { $null = New-Item -ItemType Directory -Path $OutputDir -Force -ErrorAction SilentlyContinue; $OutputDir } else { [Environment]::GetFolderPath('Desktop') }
-    $outFile   = Join-Path $outDir "OSS-eventlog$slug-$timestamp.txt"
+    $outFile   = Resolve-DiagOutput -Prefix 'OSS-eventlog' -Timestamp $timestamp -OutputDir $OutputDir -ClientName $ClientName
 
     $output | Out-File $outFile -Encoding UTF8
 

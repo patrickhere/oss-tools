@@ -22,6 +22,7 @@ echo ============================================================
 echo.
 powershell -ExecutionPolicy Bypass -File "%~dp0update.ps1"
 if %ERRORLEVEL% neq 0 goto :EOF
+set OSSMANAGED=1
 
 :SELECT_ENV
 cls
@@ -50,7 +51,7 @@ if "%CLIENTNAME%"=="" goto GET_CLIENT
 :MENU
 cls
 echo ============================================================
-echo  BankOnIT OSS Toolkit  v1.2  [%OSSENV%]  [%CLIENTNAME%]
+echo  BankOnIT OSS Toolkit  v%OSSVER%  [%OSSENV%]  [%CLIENTNAME%]
 echo  patrick hart - hartforge.dev
 echo ============================================================
 echo.

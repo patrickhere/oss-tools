@@ -16,6 +16,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+. (Join-Path $PSScriptRoot 'lib\Common.ps1')
+
 # Global trap -- catch any unhandled terminating error, log it, then show summary
 trap {
     $errMsg  = $_.Exception.Message
@@ -57,56 +59,6 @@ $script:RanPublicDesktop = $false
 $script:RanBrowserData   = $false
 $script:RanCleanup       = $false
 
-# ---------------------------------------------------------------------------
-# WRITE-LOG
-# ---------------------------------------------------------------------------
-function Write-Log {
-    param(
-        [Parameter(Mandatory)][string]$Message,
-        [ValidateSet('INFO','WARN','ERROR')][string]$Severity = 'INFO'
-    )
-
-    $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    $line  = "[$stamp] [$Severity] $Message"
-
-    switch ($Severity) {
-        'WARN'  {
-            Write-Host $line -ForegroundColor Yellow
-            $script:WarnCount++
-            $script:Issues.Add("[WARN] $Message")
-        }
-        'ERROR' {
-            Write-Host $line -ForegroundColor Red
-            $script:ErrorCount++
-            $script:Issues.Add("[ERROR] $Message")
-        }
-        default { Write-Host $line }
-    }
-
-    if ($script:LogPath) {
-        Add-Content -Path $script:LogPath -Value $line -Encoding UTF8
-    }
-}
-
-# ---------------------------------------------------------------------------
-# READ-TOGGLE -- Y/N prompt helper
-# ---------------------------------------------------------------------------
-function Read-Toggle {
-    param(
-        [Parameter(Mandatory)][string]$Prompt,
-        [bool]$Default = $true
-    )
-    $hint = if ($Default) { 'Y' } else { 'N' }
-    while ($true) {
-        Write-Host "$($Prompt)? [$hint]: " -ForegroundColor White -NoNewline
-        $raw = Read-Host
-        if ([string]::IsNullOrWhiteSpace($raw)) { return $Default }
-        $val = $raw.Trim().Substring(0,1).ToUpper()
-        if ($val -eq 'Y') { return $true }
-        if ($val -eq 'N') { return $false }
-        Write-Host '  Please respond with Y or N.' -ForegroundColor DarkGray
-    }
-}
 
 # ---------------------------------------------------------------------------
 # SHOW-SUMMARY
@@ -264,22 +216,13 @@ if ($DoStaging) {
     $stageDest = Join-Path $StagingRoot $script:PcName
     $null = New-Item -ItemType Directory -Path $stageDest -Force
 
-    $savedEAP = $ErrorActionPreference
-    $roboExit = 0
-    $roboOut  = $null
-    try {
-        $ErrorActionPreference = 'Continue'
-        $roboOut  = & robocopy $script:SourceDir $stageDest /E /R:2 /W:5 /NP /NDL 2>&1
-        $roboExit = $LASTEXITCODE
-    } finally {
-        $ErrorActionPreference = $savedEAP
-    }
+    $robo = Invoke-Robocopy @($script:SourceDir, $stageDest, '/E', '/R:2', '/W:5', '/NP', '/NDL')
 
-    if ($roboExit -ge 8) {
-        Write-Log "robocopy failed with exit code $roboExit -- $($roboOut -join ' | ')" -Severity ERROR
+    if ($robo.ExitCode -ge 8) {
+        Write-Log "robocopy failed with exit code $($robo.ExitCode) -- $($robo.Output -join ' | ')" -Severity ERROR
         Write-Log 'Continuing from original source.' -Severity WARN
     } else {
-        Write-Log "Staging complete (robocopy exit $roboExit) -> $stageDest"
+        Write-Log "Staging complete (robocopy exit $($robo.ExitCode)) -> $stageDest"
         $script:SourceDir = $stageDest
         $script:RanStaging = $true
     }
@@ -344,21 +287,12 @@ if ($DoPublicDesktop) {
             Write-Log 'restore_exclude.txt not found -- copying without exclusions.' -Severity WARN
         }
 
-        $savedEAP = $ErrorActionPreference
-        $roboExit = 0
-        $roboOut  = $null
-        try {
-            $ErrorActionPreference = 'Continue'
-            $roboOut  = & robocopy @roboArgs 2>&1
-            $roboExit = $LASTEXITCODE
-        } finally {
-            $ErrorActionPreference = $savedEAP
-        }
+        $robo = Invoke-Robocopy $roboArgs
 
-        if ($roboExit -ge 8) {
-            Write-Log "robocopy failed with exit code $roboExit -- $($roboOut -join ' | ')" -Severity ERROR
+        if ($robo.ExitCode -ge 8) {
+            Write-Log "robocopy failed with exit code $($robo.ExitCode) -- $($robo.Output -join ' | ')" -Severity ERROR
         } else {
-            Write-Log "Public Desktop restored (robocopy exit $roboExit)"
+            Write-Log "Public Desktop restored (robocopy exit $($robo.ExitCode))"
             $script:RanPublicDesktop = $true
         }
     }

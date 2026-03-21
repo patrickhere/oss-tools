@@ -20,6 +20,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+. (Join-Path (Split-Path $PSScriptRoot -Parent) 'assets\lib\Common.ps1')
+
 # Global trap -- catch any unhandled terminating error, log it, then show summary
 trap {
     $errMsg = $_.Exception.Message
@@ -85,56 +87,6 @@ $script:RanBrowserData   = $false
 $script:RanPublicDesktop = $false
 $script:RanIpconfig      = $false
 
-# ---------------------------------------------------------------------------
-# WRITE-LOG
-# ---------------------------------------------------------------------------
-function Write-Log {
-    param(
-        [Parameter(Mandatory)][string]$Message,
-        [ValidateSet('INFO','WARN','ERROR')][string]$Severity = 'INFO'
-    )
-
-    $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    $line  = "[$stamp] [$Severity] $Message"
-
-    switch ($Severity) {
-        'WARN'  {
-            Write-Host $line -ForegroundColor Yellow
-            $script:WarnCount++
-            $script:Issues.Add("[WARN] $Message")
-        }
-        'ERROR' {
-            Write-Host $line -ForegroundColor Red
-            $script:ErrorCount++
-            $script:Issues.Add("[ERROR] $Message")
-        }
-        default { Write-Host $line }
-    }
-
-    if ($script:LogPath) {
-        Add-Content -Path $script:LogPath -Value $line -Encoding UTF8
-    }
-}
-
-# ---------------------------------------------------------------------------
-# READ-TOGGLE -- Y/N prompt helper
-# ---------------------------------------------------------------------------
-function Read-Toggle {
-    param(
-        [Parameter(Mandatory)][string]$Prompt,
-        [bool]$Default = $true
-    )
-    $hint = if ($Default) { 'Y' } else { 'N' }
-    while ($true) {
-        Write-Host "$($Prompt)? [$hint]: " -ForegroundColor White -NoNewline
-        $raw = Read-Host
-        if ([string]::IsNullOrWhiteSpace($raw)) { return $Default }
-        $val = $raw.Trim().Substring(0,1).ToUpper()
-        if ($val -eq 'Y') { return $true }
-        if ($val -eq 'N') { return $false }
-        Write-Host "  Please respond with Y or N." -ForegroundColor DarkGray
-    }
-}
 
 # ---------------------------------------------------------------------------
 # RESOLVE-BACKUPDESTINATION -- classify and validate destination
@@ -172,6 +124,7 @@ function Resolve-BackupDestination {
         [System.IO.File]::WriteAllText($testFile, 'ok')
         Remove-Item $testFile -Force -ErrorAction SilentlyContinue
     } catch {
+        Remove-Item $testFile -Force -ErrorAction SilentlyContinue
         if ($dirCreated) { Remove-Item $Path -Force -ErrorAction SilentlyContinue }
         $msg = switch -Regex ($_.ToString()) {
             'network path|unreachable|not found' { "Cannot reach $Path -- check network connection" }
@@ -507,23 +460,12 @@ if ($DoPublicDesktop) {
         if ($xdArgs.Count -gt 0) { $roboArgs += '/XD'; $roboArgs += $xdArgs.ToArray() }
         if ($xfArgs.Count -gt 0) { $roboArgs += '/XF'; $roboArgs += $xfArgs.ToArray() }
 
-        # Temporarily allow non-terminating errors so robocopy stderr output
-        # does not trigger $ErrorActionPreference = 'Stop' before we check $LASTEXITCODE
-        $savedEAP = $ErrorActionPreference
-        $robocopyExit = 0
-        $roboOutput   = $null
-        try {
-            $ErrorActionPreference = 'Continue'
-            $roboOutput   = & robocopy @roboArgs 2>&1
-            $robocopyExit = $LASTEXITCODE
-        } finally {
-            $ErrorActionPreference = $savedEAP
-        }
+        $robo = Invoke-Robocopy $roboArgs
 
-        if ($robocopyExit -ge 8) {
-            Write-Log "robocopy failed with exit code $robocopyExit -- $($roboOutput -join ' | ')" -Severity ERROR
+        if ($robo.ExitCode -ge 8) {
+            Write-Log "robocopy failed with exit code $($robo.ExitCode) -- $($robo.Output -join ' | ')" -Severity ERROR
         } else {
-            Write-Log "Public Desktop copied (robocopy exit $robocopyExit)"
+            Write-Log "Public Desktop copied (robocopy exit $($robo.ExitCode))"
             $script:RanPublicDesktop = $true
         }
     }
@@ -608,6 +550,13 @@ if (Test-Path $RestorePs1) {
     Copy-Item $RestorePs1 (Join-Path $script:HostDir 'Restore.ps1') -Force
 } else {
     Write-Log "Restore.ps1 not found at $RestorePs1" -Severity WARN
+}
+$CommonPs1 = Join-Path $AssetsDir 'lib\Common.ps1'
+if (Test-Path $CommonPs1) {
+    $null = New-Item -ItemType Directory -Path (Join-Path $script:HostDir 'lib') -Force
+    Copy-Item $CommonPs1 (Join-Path $script:HostDir 'lib\Common.ps1') -Force
+} else {
+    Write-Log "Common.ps1 not found at $CommonPs1 -- Restore.ps1 will fail to load." -Severity WARN
 }
 
 # Restore exclude list
