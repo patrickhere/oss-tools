@@ -28,7 +28,8 @@ try {
     foreach ($adapter in $adapters) {
         $output.Add("=== $($adapter.Name) ($($adapter.InterfaceDescription)) ===")
         $output.Add("  MAC:    $($adapter.MacAddress)")
-        $output.Add("  Speed:  $([math]::Round($adapter.LinkSpeed / 1MB)) Mbps")
+        $speedStr = try { "$([math]::Round([uint64]$adapter.LinkSpeed / 1MB)) Mbps" } catch { $adapter.LinkSpeed }
+        $output.Add("  Speed:  $speedStr")
 
         $ipConfig = Get-NetIPConfiguration -InterfaceIndex $adapter.InterfaceIndex -ErrorAction SilentlyContinue
 

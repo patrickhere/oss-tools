@@ -21,16 +21,16 @@ try {
 
     # OS
     $output.Add("=== OS ===")
-    $os = Get-WmiObject Win32_OperatingSystem
+    $os = Get-CimInstance Win32_OperatingSystem
     $output.Add("Caption:    $($os.Caption)")
     $output.Add("Build:      $($os.BuildNumber)")
     $output.Add("Version:    $($os.Version)")
-    $output.Add("Last Boot:  $($os.ConvertToDateTime($os.LastBootUpTime))")
+    $output.Add("Last Boot:  $($os.LastBootUpTime)")
     $output.Add("")
 
     # Domain / Machine
     $output.Add("=== Machine ===")
-    $cs = Get-WmiObject Win32_ComputerSystem
+    $cs = Get-CimInstance Win32_ComputerSystem
     $output.Add("Computer:   $($cs.Name)")
     $output.Add("Domain:     $($cs.Domain)")
     $roles = @{0="Standalone Workstation";1="Member Workstation";2="Standalone Server";3="Member Server";4="DC Backup";5="DC Primary"}

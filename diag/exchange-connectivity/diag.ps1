@@ -23,10 +23,10 @@ try {
     $output.Add("")
 
     function Test-Port {
-        param([string]$Host, [int]$Port)
+        param([string]$Hostname, [int]$Port)
         $tcp = New-Object System.Net.Sockets.TcpClient
         try {
-            $conn = $tcp.BeginConnect($Host, $Port, $null, $null)
+            $conn = $tcp.BeginConnect($Hostname, $Port, $null, $null)
             $wait = $conn.AsyncWaitHandle.WaitOne(3000, $false)
             if (-not $wait) { return $false }
             $tcp.EndConnect($conn)
