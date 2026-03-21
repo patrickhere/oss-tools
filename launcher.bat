@@ -38,9 +38,9 @@ echo   2. microsoft 365 (cloud only)
 echo   3. hybrid (exchange + m365)
 echo.
 set /p env_choice="select environment: "
-if "%env_choice%"=="1" set OSSENV=onprem & goto GET_CLIENT
-if "%env_choice%"=="2" set OSSENV=m365   & goto GET_CLIENT
-if "%env_choice%"=="3" set OSSENV=hybrid & goto GET_CLIENT
+if "%env_choice%"=="1" set OSSENV=onprem& goto GET_CLIENT
+if "%env_choice%"=="2" set OSSENV=m365& goto GET_CLIENT
+if "%env_choice%"=="3" set OSSENV=hybrid& goto GET_CLIENT
 goto SELECT_ENV
 
 :GET_CLIENT
