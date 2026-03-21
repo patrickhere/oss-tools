@@ -311,6 +311,12 @@ if ($DoBrowserData) {
     if (-not (Test-Path $browsersDir)) {
         Write-Log 'No Browsers folder in backup -- skipping.' -Severity WARN
     } else {
+        # Warn if browsers are running -- live Bookmarks file may be locked or overwritten on next launch
+        $runningBrowsers = Get-Process -Name @('msedge','chrome') -ErrorAction SilentlyContinue |
+                               Select-Object -ExpandProperty Name -Unique
+        if ($runningBrowsers) {
+            Write-Log "WARNING: $($runningBrowsers -join ', ') is running -- bookmark restore may fail or be overwritten. Close browsers for best results." -Severity WARN
+        }
         $anyFound = $false
         foreach ($userDir in (Get-ChildItem -Path $browsersDir -Directory -ErrorAction SilentlyContinue)) {
             $userName = $userDir.Name
@@ -377,8 +383,9 @@ if ($DoCleanup) {
     # MappedDrives.reg -- lives inside a user profile subfolder
     Get-ChildItem -Path $script:SourceDir -Recurse -Filter 'MappedDrives.reg' -ErrorAction SilentlyContinue |
         ForEach-Object {
-            Move-Item $_.FullName (Join-Path $OldComputerDir $_.Name) -Force
-            Write-Log "Moved MappedDrives.reg"
+            $destName = "$($_.Directory.Name)_MappedDrives.reg"
+            Move-Item $_.FullName (Join-Path $OldComputerDir $destName) -Force
+            Write-Log "Moved MappedDrives.reg ($($_.Directory.Name))"
         }
 
     $script:RanCleanup = $true

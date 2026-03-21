@@ -1,3 +1,4 @@
+param([switch]$NonInteractive)
 # config.ps1
 # Disables consumer OneDrive auto-install and removes it from the startup run key
 
@@ -6,7 +7,8 @@ Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
-
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 # Check for admin
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -45,7 +47,10 @@ try {
 catch {
     Write-Host ""
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) {
+    Read-Host "Press Enter to close"
+}

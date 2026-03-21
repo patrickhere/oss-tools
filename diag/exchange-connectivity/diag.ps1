@@ -1,7 +1,7 @@
 # diag.ps1
 # Tests Exchange/M365 connectivity based on the selected environment
 
-param([string]$Environment = "onprem", [string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
+param([ValidateSet('onprem','m365','hybrid')][string]$Environment = "onprem", [string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive)
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 

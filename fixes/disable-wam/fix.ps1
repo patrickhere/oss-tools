@@ -1,13 +1,19 @@
 # fix.ps1
 # Disables WAM (Web Account Manager) for Office authentication
 
-param([string]$Environment = "onprem")
+param(
+    [ValidateSet('onprem','m365','hybrid')][string]$Environment = "onprem",
+    [switch]$NonInteractive
+)
 
 Write-Host "  BankOnIT OSS | Disable WAM" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 Write-Host ""
 Write-Host "  environment: $Environment" -ForegroundColor DarkGray
@@ -66,7 +72,8 @@ try {
 catch {
     Write-Host ""
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

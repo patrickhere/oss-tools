@@ -1,12 +1,15 @@
+param([switch]$NonInteractive)
 # config.ps1
-# Prevents Windows Update from auto-rebooting when users are logged in
+# Prevents Windows Update from auto-rebooting and from auto-installing updates while users are logged in.
+# Sets AUOptions=3: updates download automatically but require manual install trigger.
 
 Write-Host "  BankOnIT OSS | Disable Update Auto-Reboot" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
-
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 # Check for admin
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -30,13 +33,17 @@ try {
     Set-ItemProperty -Path $auPath -Name "AUOptions" -Value 3 -Type DWord
 
     Write-Host ""
-    Write-Host "SUCCESS: Windows Update auto-reboot suppressed." -ForegroundColor Green
-    Write-Host "Updates will download automatically but will not install or reboot while users are logged in."
+    Write-Host "SUCCESS: Windows Update reboot and auto-install suppressed." -ForegroundColor Green
+    Write-Host "Updates will download automatically but will NOT install or reboot while users are logged in."
+    Write-Host "Technician or user must manually trigger installs."
 }
 catch {
     Write-Host ""
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) {
+    Read-Host "Press Enter to close"
+}

@@ -1,12 +1,16 @@
 # fix.ps1
 # Clears the print queue and restarts the spooler
 
+param([switch]$NonInteractive)
+
 Write-Host "  BankOnIT OSS | Fix Print Spooler" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
 
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 # Check for admin
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -35,7 +39,12 @@ try {
             exit 0
         }
         Remove-Item -Path "$spoolPath\*" -Force -Recurse -ErrorAction SilentlyContinue
-        Write-Host "INFO: $($files.Count) spool file(s) removed." -ForegroundColor Yellow
+        $remaining = (Get-ChildItem -Path $spoolPath -ErrorAction SilentlyContinue).Count
+        $removed   = $files.Count - $remaining
+        Write-Host "INFO: $removed of $($files.Count) spool file(s) removed." -ForegroundColor Yellow
+        if ($remaining -gt 0) {
+            Write-Host "WARNING: $remaining file(s) could not be removed (may be locked)." -ForegroundColor Yellow
+        }
     }
     else {
         Write-Host "INFO: Spool queue already empty." -ForegroundColor Yellow
@@ -52,7 +61,8 @@ catch {
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host "INFO: Attempting to restart spooler anyway..." -ForegroundColor Yellow
     Start-Service -Name Spooler -ErrorAction SilentlyContinue
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

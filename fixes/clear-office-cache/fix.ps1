@@ -1,12 +1,16 @@
 # fix.ps1
 # Clears Office identity and license cache to fix account notice and activation loops
 
+param([switch]$NonInteractive)
+
 Write-Host "  BankOnIT OSS | Clear Office Cache" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
 
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 # Check for running Office apps
 $officeProcs = @("OUTLOOK", "WINWORD", "EXCEL", "POWERPNT", "ONENOTE", "TEAMS")
@@ -81,12 +85,14 @@ try {
         Write-Host "WARNING: $($failed.Count) location(s) could not be cleared (files may be locked):" -ForegroundColor Yellow
         $failed | ForEach-Object { Write-Host "  $_" -ForegroundColor Red }
     }
-    Write-Host "Sign back in to Office after reopening."
+    Write-Host "Sign back in to Office and other Microsoft apps (Teams, OneDrive) after reopening."
+    Write-Host "Note: clearing the token broker cache signs out of all Microsoft services on this machine."
 }
 catch {
     Write-Host ""
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

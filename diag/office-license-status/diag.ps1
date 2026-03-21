@@ -31,9 +31,15 @@ try {
     Write-Host "INFO: Running ospp.vbs /dstatus..." -ForegroundColor Yellow
 
     $result = & cscript //nologo $ospp /dstatus 2>&1
+    $csExit = $LASTEXITCODE
 
     Write-Host ""
     $result | ForEach-Object { Write-Host $_ }
+
+    if ($csExit -ne 0) {
+        Write-Host ""
+        Write-Host "WARNING: cscript exited with code $csExit -- output may be incomplete or an error occurred." -ForegroundColor Yellow
+    }
 
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
     $outFile   = Resolve-DiagOutput -Prefix 'OSS-license' -Timestamp $timestamp -OutputDir $OutputDir -ClientName $ClientName

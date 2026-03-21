@@ -1,12 +1,16 @@
 # fix.ps1
 # Deletes Outlook profile(s) from registry so Outlook prompts for a fresh setup
 
+param([switch]$NonInteractive)
+
 Write-Host "  BankOnIT OSS | Outlook Profile Rebuild" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
 if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
 
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 $profilesPath = "HKCU:\Software\Microsoft\Office\16.0\Outlook\Profiles"
 
@@ -103,7 +107,8 @@ try {
 catch {
     Write-Host ""
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

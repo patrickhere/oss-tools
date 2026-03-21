@@ -9,6 +9,10 @@ $localFile    = Join-Path $PSScriptRoot "version.txt"
 
 $localVersion = if (Test-Path $localFile) { (Get-Content $localFile -Raw).Trim() } else { "0" }
 
+$zipPath     = Join-Path $env:TEMP "oss-tools-update.zip"
+$extractPath = Join-Path $env:TEMP "oss-tools-update"
+$downloadOk  = $false
+
 try {
     $response      = Invoke-WebRequest -Uri $versionUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
     $remoteVersion = $response.Content.Trim()
@@ -29,9 +33,6 @@ try {
 
     Write-Host "  downloading v$remoteVersion..." -ForegroundColor Yellow
 
-    $zipPath     = Join-Path $env:TEMP "oss-tools-update.zip"
-    $extractPath = Join-Path $env:TEMP "oss-tools-update"
-
     Invoke-WebRequest -Uri $archiveUrl -OutFile $zipPath -UseBasicParsing -TimeoutSec 120 -ErrorAction Stop
 
     if (Test-Path $extractPath) { Remove-Item $extractPath -Recurse -Force }
@@ -44,13 +45,18 @@ try {
         exit 1
     }
 
-    Copy-Item -Path "$($extracted.FullName)\*" -Destination $PSScriptRoot -Recurse -Force
+    $downloadOk = $true
+    Copy-Item -Path "$($extracted.FullName)\*" -Destination $PSScriptRoot -Recurse -Force -ErrorAction Stop
     Write-Host "  updated to v$remoteVersion." -ForegroundColor Green
     Write-Host "  re-run the script to use the new version." -ForegroundColor Green
 }
-
 catch {
-    # Unreachable or blocked -- silent, don't interrupt the tool
+    if ($downloadOk) {
+        # Failed during file copy -- toolkit may be in a partial state
+        Write-Host "  ERROR: update failed during install -- re-run the launcher to try again." -ForegroundColor Red
+        exit 1
+    }
+    # Network/server unreachable -- silent, don't interrupt the tool
     Write-Host "  version $localVersion" -ForegroundColor DarkGray
     exit 0
 }
