@@ -37,7 +37,7 @@ try {
         }
     }
 
-    $targets = $targets | Sort-Object -Unique
+    $targets = @($targets | Sort-Object -Unique)
 
     if ($targets.Count -eq 0) {
         Write-Host ""

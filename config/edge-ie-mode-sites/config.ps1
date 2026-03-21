@@ -1,6 +1,8 @@
 # config.ps1
 # Enables IE mode in Edge and manages a local site list
 
+param([switch]$NonInteractive)
+
 Write-Host "  BankOnIT OSS | Edge IE Mode Sites" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
@@ -70,6 +72,13 @@ function Show-Sites($xml) {
     }
 }
 
+# In non-interactive mode, policy is already set above -- just report and exit
+if ($NonInteractive) {
+    Write-Host ""
+    Write-Host "SUCCESS: IE mode policy set. Run interactively to manage site list." -ForegroundColor Green
+    exit 0
+}
+
 # Interactive site list manager
 while ($true) {
     $xml = Get-SiteList
@@ -137,4 +146,4 @@ Write-Host ""
 Write-Host "SUCCESS: IE mode enabled. Site list saved to $siteListPath" -ForegroundColor Green
 Write-Host "Edge will load the updated site list on next launch."
 Write-Host ""
-Read-Host "Press Enter to close"
+if (-not $NonInteractive) { Read-Host "Press Enter to close" }

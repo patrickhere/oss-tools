@@ -45,7 +45,7 @@ goto SELECT_ENV
 
 :GET_CLIENT
 echo.
-set /p CLIENTNAME="client name / branch (e.g. FirstNational-Downtown): "
+set /p CLIENTNAME="client name / branch (e.g. BOITMAIN): "
 if "%CLIENTNAME%"=="" goto GET_CLIENT
 
 :MENU
