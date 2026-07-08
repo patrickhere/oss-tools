@@ -11,7 +11,7 @@
 .EXAMPLE
     .\Backup.ps1
     .\Backup.ps1 -BackupDest "E:\Backups"
-    .\Backup.ps1 -BackupDest "\\fileserver\Navanta\PC-Backups"
+    .\Backup.ps1 -BackupDest "\\fileserver\BankOnIT\PC-Backups"
 #>
 param(
     [string]$BackupDest

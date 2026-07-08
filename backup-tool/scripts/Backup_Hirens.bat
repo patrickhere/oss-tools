@@ -47,14 +47,14 @@ IF "%user%"=="" goto nouser
 
 :belarc
 call :log "Preparing Belarc Advisor assets..."
-if not exist "%SYSTEMDRIVE%\Navanta" mkdir "%SYSTEMDRIVE%\Navanta"
-if exist "%SYSTEMDRIVE%\Navanta\Belarc Advisor" (
-    call :log "Belarc Advisor already installed under %SYSTEMDRIVE%\Navanta\Belarc Advisor"
+if not exist "%SYSTEMDRIVE%\BankOnIT" mkdir "%SYSTEMDRIVE%\BankOnIT"
+if exist "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor" (
+    call :log "Belarc Advisor already installed under %SYSTEMDRIVE%\BankOnIT\Belarc Advisor"
 ) else (
     call :log "Belarc Advisor not found. Deploying installer from %BIN_DIR%advisorinstaller.exe"
-    mkdir "%SYSTEMDRIVE%\Navanta\Belarc Advisor" 2>nul
+    mkdir "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor" 2>nul
     if exist "%BIN_DIR%advisorinstaller.exe" (
-        copy "%BIN_DIR%advisorinstaller.exe" "%SYSTEMDRIVE%\Navanta\Belarc Advisor\" >nul
+        copy "%BIN_DIR%advisorinstaller.exe" "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor\" >nul
     ) else (
         call :log "WARNING: Belarc advisorinstaller.exe missing at %BIN_DIR%advisorinstaller.exe"
     )

@@ -19,7 +19,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit 1
 }
 
-$siteListPath = "C:\Navanta\ie-sites.xml"
+$siteListPath = "C:\BankOnIT\ie-sites.xml"
 $policyPath   = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
 
 # Ensure Edge IE mode policy is enabled

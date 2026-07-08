@@ -32,7 +32,7 @@ REM put logs, HTML reports, and restore scripts into C:\Users.
 if exist "Public" (
     xcopy "Public\*.*" "%SYSTEMDRIVE%\Users\Public" /C /E /I /Y /EXCLUDE:restore_exclude.txt >> Logs\restorelog.txt
 )
-copy Logs\restorelog.txt %SYSTEMDRIVE%\Navanta\restorelog.txt 2>nul
+copy Logs\restorelog.txt %SYSTEMDRIVE%\BankOnIT\restorelog.txt 2>nul
 
 REM echo Now getting moving outlook profile for one user to Documents\Outlook Files.
 REM echo If this doesn't need to be done, or no one has outlook, just press enter.
@@ -61,27 +61,27 @@ for /d %%U in ("Browsers\*") do (
         echo Chrome bookmarks restored for %%~nxU
     )
     if exist "%%U\Firefox\places.sqlite" (
-        md "%SYSTEMDRIVE%\Navanta\Firefox\%%~nxU" 2>nul
-        copy /Y "%%U\Firefox\places.sqlite" "%SYSTEMDRIVE%\Navanta\Firefox\%%~nxU\places.sqlite" >nul
-        echo Firefox bookmarks for %%~nxU copied to %SYSTEMDRIVE%\Navanta\Firefox\%%~nxU
+        md "%SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU" 2>nul
+        copy /Y "%%U\Firefox\places.sqlite" "%SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU\places.sqlite" >nul
+        echo Firefox bookmarks for %%~nxU copied to %SYSTEMDRIVE%\BankOnIT\Firefox\%%~nxU
         echo   To restore: Firefox ^> Bookmarks ^> Manage Bookmarks ^> Import and Backup ^> Restore
     )
 )
 
 :cleanup
-echo "Moving Old Computer info to %SYSTEMDRIVE%\Navanta\Old Computer..."
+echo "Moving Old Computer info to %SYSTEMDRIVE%\BankOnIT\Old Computer..."
 pushd %SYSTEMDRIVE%\Users
-mkdir "%SYSTEMDRIVE%\Navanta\Old Computer"
+mkdir "%SYSTEMDRIVE%\BankOnIT\Old Computer"
 
-move "%old%.html" "%SYSTEMDRIVE%\Navanta\Old Computer\"
-move PrinterList.txt "%SYSTEMDRIVE%\Navanta\Old Computer\"
-move ipconfig.txt "%SYSTEMDRIVE%\Navanta\Old Computer\"
+move "%old%.html" "%SYSTEMDRIVE%\BankOnIT\Old Computer\"
+move PrinterList.txt "%SYSTEMDRIVE%\BankOnIT\Old Computer\"
+move ipconfig.txt "%SYSTEMDRIVE%\BankOnIT\Old Computer\"
 
-echo Restore completed. Restore log is located at %SYSTEMDRIVE%\Navanta\restorelog.txt
-echo Old Computer info (Belarc Advisor) is located at %SYSTEMDRIVE%\Navanta\Old Computer\%old%.html
-echo If mapped drives did not copy over, double-click the registry file MappedDrives.reg in the user's folder. Otherwise, this batch file will move it to the %SYSTEMDRIVE%\Navanta\Old Computer folder once you press enter.
+echo Restore completed. Restore log is located at %SYSTEMDRIVE%\BankOnIT\restorelog.txt
+echo Old Computer info (Belarc Advisor) is located at %SYSTEMDRIVE%\BankOnIT\Old Computer\%old%.html
+echo If mapped drives did not copy over, double-click the registry file MappedDrives.reg in the user's folder. Otherwise, this batch file will move it to the %SYSTEMDRIVE%\BankOnIT\Old Computer folder once you press enter.
 pause
-move "%user%\MappedDrives.reg" "%SYSTEMDRIVE%\Navanta\Old Computer\"
+move "%user%\MappedDrives.reg" "%SYSTEMDRIVE%\BankOnIT\Old Computer\"
 goto end
 
 :ensureAdmin

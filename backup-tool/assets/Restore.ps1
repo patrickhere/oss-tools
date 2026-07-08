@@ -39,7 +39,7 @@ trap {
 # ---------------------------------------------------------------------------
 # CONFIG -- all paths defined here
 # ---------------------------------------------------------------------------
-$NavantaRoot  = "$env:SystemDrive\Navanta"
+$NavantaRoot  = "$env:SystemDrive\BankOnIT"
 $OldComputerDir = Join-Path $NavantaRoot 'Old Computer'
 $StagingRoot    = Join-Path $NavantaRoot 'Restore'
 
@@ -198,7 +198,7 @@ $DoStaging       = Read-Toggle -Prompt 'Stage backup locally via robocopy first 
 $DoTranswiz      = Read-Toggle -Prompt 'Restore user profile (Transwiz)'                                                        -Default $true
 $DoPublicDesktop = Read-Toggle -Prompt 'Restore Public Desktop'                                                                  -Default $true
 $DoBrowserData   = Read-Toggle -Prompt 'Restore browser bookmarks (Edge/Chrome/Firefox)'                                         -Default $true
-$DoCleanup       = Read-Toggle -Prompt 'Move old computer files to C:\Navanta\Old Computer'                                     -Default $true
+$DoCleanup       = Read-Toggle -Prompt 'Move old computer files to C:\BankOnIT\Old Computer'                                     -Default $true
 
 Write-Log "Staging: $(if ($DoStaging) {'enabled'} else {'skipped'})"
 Write-Log "Transwiz: $(if ($DoTranswiz) {'enabled'} else {'skipped'})"

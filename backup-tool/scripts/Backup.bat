@@ -61,7 +61,7 @@ if not defined BACKUP_ROOT (
 
 set "HOST_DIR=%BACKUP_ROOT%\%COMPUTER_NAME%"
 set "LOG_DIR=%HOST_DIR%\Logs"
-set "NAVANTA_ROOT=%SYSTEMDRIVE%\Navanta"
+set "NAVANTA_ROOT=%SYSTEMDRIVE%\BankOnIT"
 set "BELARC_DIR=%NAVANTA_ROOT%\Belarc Advisor"
 set "BELARC_INSTALLER=%BIN_DIR%advisorinstaller.exe"
 set "BELARC_START=%BIN_DIR%Start_Belarc.ps1"
