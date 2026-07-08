@@ -141,11 +141,11 @@ if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Adm
 $banner = @'
 
   ==================================================
-    ____              _     ___       ___ _____
-   | __ )  __ _ _ __ | | __/ _ \ _ _|_ _|_   _|
-   |  _ \ / _` | '_ \| |/ / | | | '_ \| |  | |
-   | |_) | (_| | | | |   <| |_| | | | | |  | |
-   |____/ \__,_|_| |_|_|\_\\___/|_| |_|___| |_|
+    _   _                          _
+   | \ | | __ ___   ____ _ _ __ | |_ __ _
+   |  \| |/ _` \ \ / / _` | '_ \| __/ _` |
+   | |\  | (_| |\ V / (_| | | | | || (_| |
+   |_| \_|\__,_| \_/ \__,_|_| |_|\__\__,_|
 
     Navanta Restore Utility  --  PowerShell Edition
     patrick hart -- hartforge.dev
@@ -168,6 +168,11 @@ if (-not [string]::IsNullOrWhiteSpace($SourcePath)) {
 }
 
 $script:PcName = Split-Path $script:SourceDir -Leaf
+# drive-root sources (e.g. -SourcePath E:\) have no folder name - sanitize so
+# staging paths and cleanup filenames don't end up with a bare "E:"
+if ($script:PcName -match '^[A-Za-z]:$' -or [string]::IsNullOrWhiteSpace($script:PcName)) {
+    $script:PcName = 'Drive' + ($script:PcName -replace '[:\\]', '')
+}
 
 Write-Host ''
 Write-Host 'Restore source:' -ForegroundColor White
@@ -368,15 +373,16 @@ if ($DoBrowserData) {
 # ---------------------------------------------------------------------------
 if ($DoCleanup) {
     Write-Host ''
-    Write-Log "Moving old computer files to $OldComputerDir..."
+    Write-Log "Copying old computer files to $OldComputerDir..."
 
     $null = New-Item -ItemType Directory -Path $OldComputerDir -Force
 
+    # copy, never move - the source backup may be the only copy that exists
     foreach ($item in @("$($script:PcName).html", 'ipconfig.txt', 'PrinterList.txt')) {
         $src = Join-Path $script:SourceDir $item
         if (Test-Path $src) {
-            Move-Item $src (Join-Path $OldComputerDir $item) -Force
-            Write-Log "Moved $item"
+            Copy-Item $src (Join-Path $OldComputerDir $item) -Force
+            Write-Log "Copied $item"
         }
     }
 
@@ -384,8 +390,8 @@ if ($DoCleanup) {
     Get-ChildItem -Path $script:SourceDir -Recurse -Filter 'MappedDrives.reg' -ErrorAction SilentlyContinue |
         ForEach-Object {
             $destName = "$($_.Directory.Name)_MappedDrives.reg"
-            Move-Item $_.FullName (Join-Path $OldComputerDir $destName) -Force
-            Write-Log "Moved MappedDrives.reg ($($_.Directory.Name))"
+            Copy-Item $_.FullName (Join-Path $OldComputerDir $destName) -Force
+            Write-Log "Copied MappedDrives.reg ($($_.Directory.Name))"
         }
 
     $script:RanCleanup = $true

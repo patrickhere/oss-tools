@@ -133,11 +133,16 @@ rename "%oldhostname%" "%hostname%"
 rename "%hostname%\%oldhostname%.html" "%hostname%.html"
 
 echo.
-echo Copying Restore batch files...
-if exist "%ASSETS_DIR%IGNORE.bat" (
-    copy "%ASSETS_DIR%IGNORE.bat" "%hostname%\Restore (run as admin).bat" >nul
+echo Copying Restore scripts...
+if exist "%ASSETS_DIR%Restore.bat" (
+    copy "%ASSETS_DIR%Restore.bat" "%hostname%\Restore (run as admin).bat" >nul
+    copy "%ASSETS_DIR%Restore.ps1" "%hostname%\Restore.ps1" >nul
+    if exist "%ASSETS_DIR%lib\Common.ps1" (
+        mkdir "%hostname%\lib" 2>nul
+        copy "%ASSETS_DIR%lib\Common.ps1" "%hostname%\lib\Common.ps1" >nul
+    )
 ) else (
-    call :log "WARNING: IGNORE.bat (restore template) missing at %ASSETS_DIR%IGNORE.bat"
+    call :log "WARNING: Restore.bat missing at %ASSETS_DIR%Restore.bat"
 )
 
 if exist "%TXT_DIR%IGNORE.txt" (

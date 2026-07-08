@@ -7,7 +7,7 @@ Write-Host "  Navanta OSS | Flush DNS / Winsock Reset" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
-if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+if (-not $env:OSSMANAGED -and (Test-Path $_upd)) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

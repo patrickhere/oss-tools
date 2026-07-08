@@ -1,6 +1,6 @@
 # navanta oss toolkit
 
-portable scripts for fixing common outlook, office, and windows issues on bank branch machines. built for onsite visits -> drop it on a usb stick, run `launcher.bat`, pick a tool.
+portable scripts for fixing common outlook, office, and windows issues on managed client machines. built for onsite visits -> drop it on a usb stick, run `launcher.bat`, pick a tool.
 
 supports on-premises exchange, microsoft 365, and hybrid environments. environment-sensitive scripts adjust their behavior based on what you select at startup.
 
@@ -77,8 +77,8 @@ run these first if you're not sure what you're dealing with. output saves to a t
 every tool you run gets logged to `Logs\OSS-session-log.txt` in the toolkit folder:
 
 ```
-2026-03-18 14:23:11 | WORKSTATION01 | FirstNational-Downtown | onprem | system-snapshot
-2026-03-18 14:24:05 | WORKSTATION01 | FirstNational-Downtown | onprem | outlook-autodiscover
+2026-03-18 14:23:11 | WORKSTATION01 | CLIENT-BRANCH | onprem | system-snapshot
+2026-03-18 14:24:05 | WORKSTATION01 | CLIENT-BRANCH | onprem | outlook-autodiscover
 ```
 
 gives you a record of what was done during the visit without having to write anything down.

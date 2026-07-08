@@ -68,7 +68,7 @@ set "BELARC_START=%BIN_DIR%Start_Belarc.ps1"
 set "BELARC_EXEC_PRIMARY=%PROGRAMFILES%\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 set "BELARC_EXEC_SECONDARY=%PROGRAMFILES(X86)%\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 set "TRANSWIZ_EXE=%BIN_DIR%Transwiz_free.exe"
-set "RESTORE_SCRIPT_SRC=%ASSETS_DIR%IGNORE.bat"
+set "RESTORE_SCRIPT_SRC=%ASSETS_DIR%Restore.bat"
 set "RESTORE_EXCLUDE_TEMPLATE=%TXT_DIR%IGNORE.txt"
 set "EXCLUDE_FILE=%TXT_DIR%backup_exclude.txt"
 set "EXCLUDE_FILE_RESOLVED="
@@ -139,6 +139,11 @@ if "%DO_PUBLIC_DESKTOP%"=="1" (
 call :log "Copying restore assets..."
 if exist "%RESTORE_SCRIPT_SRC%" (
     copy "%RESTORE_SCRIPT_SRC%" "%HOST_DIR%\Restore (run as admin).bat" >nul
+    copy "%ASSETS_DIR%Restore.ps1" "%HOST_DIR%\Restore.ps1" >nul
+    if exist "%ASSETS_DIR%lib\Common.ps1" (
+        mkdir "%HOST_DIR%\lib" 2>nul
+        copy "%ASSETS_DIR%lib\Common.ps1" "%HOST_DIR%\lib\Common.ps1" >nul
+    )
 ) else (
     call :log "WARNING: Restore batch template missing at %RESTORE_SCRIPT_SRC%"
 )

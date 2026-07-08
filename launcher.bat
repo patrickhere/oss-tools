@@ -45,7 +45,9 @@ goto SELECT_ENV
 
 :GET_CLIENT
 echo.
-set /p CLIENTNAME="client name / branch (e.g. BOITMAIN): "
+set /p CLIENTNAME="client name / branch (e.g. MAINST-01): "
+rem strip quotes so comparisons and logging can't break on embedded "
+if defined CLIENTNAME set "CLIENTNAME=%CLIENTNAME:"=%"
 if "%CLIENTNAME%"=="" goto GET_CLIENT
 
 :MENU
@@ -114,7 +116,9 @@ goto MENU
 
 :LOG
 if not exist "%~dp0Logs\" mkdir "%~dp0Logs"
-echo %DATE% %TIME:~0,8% ^| %COMPUTERNAME% ^| %CLIENTNAME% ^| %OSSENV% ^| %LOGSCRIPT% >> "%~dp0Logs\OSS-session-log.txt"
+setlocal EnableDelayedExpansion
+echo !DATE! !TIME:~0,8! ^| !COMPUTERNAME! ^| !CLIENTNAME! ^| !OSSENV! ^| !LOGSCRIPT! >> "%~dp0Logs\OSS-session-log.txt"
+endlocal
 goto %LOGBACK%
 
 :RUN_AUTODISCOVER

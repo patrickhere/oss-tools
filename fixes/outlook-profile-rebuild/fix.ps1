@@ -7,7 +7,7 @@ Write-Host "  Navanta OSS | Outlook Profile Rebuild" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
-if (Test-Path $_upd) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
+if (-not $env:OSSMANAGED -and (Test-Path $_upd)) { powershell -ExecutionPolicy Bypass -File $_upd; if ($LASTEXITCODE -eq 2) { exit 0 } }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -87,6 +87,16 @@ try {
         Write-Host ""
         Read-Host "Press Enter to close"
         exit 1
+    }
+
+    # Confirm before anything is deleted - no undo for this
+    Write-Host ""
+    Write-Host "About to PERMANENTLY delete these profile(s):" -ForegroundColor Yellow
+    $toDelete | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
+    $confirm = Read-Host "Type Y to confirm deletion"
+    if ($confirm -notmatch '^[Yy]$') {
+        Write-Host "Aborted - nothing deleted." -ForegroundColor Green
+        exit 0
     }
 
     # Delete selected profiles
