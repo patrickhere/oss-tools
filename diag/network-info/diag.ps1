@@ -5,7 +5,7 @@ param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 
-Write-Host "  BankOnIT OSS | Network Info" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Network Info" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 Invoke-UpdateCheck
 
@@ -13,7 +13,7 @@ Invoke-UpdateCheck
 try {
     $output = [System.Collections.Generic.List[string]]::new()
 
-    $output.Add("BankOnIT OSS | Network Info")
+    $output.Add("Navanta OSS | Network Info")
     $output.Add("patrick hart - hartforge.dev")
     $output.Add("Generated: $(Get-Date)")
     $output.Add("Machine: $env:COMPUTERNAME")

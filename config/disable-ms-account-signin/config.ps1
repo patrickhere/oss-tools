@@ -3,7 +3,7 @@ param([switch]$NonInteractive)
 # Blocks personal Microsoft account authentication machine-wide via Windows policy.
 # This prevents MSA sign-in prompts in Office and across the OS (Settings, Store, etc.).
 
-Write-Host "  BankOnIT OSS | Disable MS Account Sign-in" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Disable MS Account Sign-in" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"

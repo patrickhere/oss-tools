@@ -3,8 +3,8 @@ REM DEPRECATED -- replaced by Backup.ps1. Do not delete (rollback reference).
 setlocal EnableExtensions EnableDelayedExpansion
 
 REM ---------------------------------------------------------------------------
-REM  BankOnIT Backup Utility (original by redacted, maintained by Patrick Hart)
-REM  Contact: patrick.hart@bankonitusa.com
+REM  Navanta Backup Utility (maintained by Patrick Hart)
+REM  Contact: hartforge.dev
 REM  Last Updated: 11/21/2025
 REM 
 REM  SUMMARY
@@ -61,8 +61,8 @@ if not defined BACKUP_ROOT (
 
 set "HOST_DIR=%BACKUP_ROOT%\%COMPUTER_NAME%"
 set "LOG_DIR=%HOST_DIR%\Logs"
-set "BANKONIT_ROOT=%SYSTEMDRIVE%\BankOnIT"
-set "BELARC_DIR=%BANKONIT_ROOT%\Belarc Advisor"
+set "NAVANTA_ROOT=%SYSTEMDRIVE%\Navanta"
+set "BELARC_DIR=%NAVANTA_ROOT%\Belarc Advisor"
 set "BELARC_INSTALLER=%BIN_DIR%advisorinstaller.exe"
 set "BELARC_START=%BIN_DIR%Start_Belarc.ps1"
 set "BELARC_EXEC_PRIMARY=%PROGRAMFILES%\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
@@ -77,7 +77,7 @@ if exist "%EXCLUDE_FILE%" for %%E in ("%EXCLUDE_FILE%") do set "EXCLUDE_FILE_RES
 call :ensureDir "%BACKUP_ROOT%" || goto :end
 call :ensureDir "%HOST_DIR%" || goto :end
 call :ensureDir "%LOG_DIR%" || goto :end
-call :ensureDir "%BANKONIT_ROOT%" || goto :end
+call :ensureDir "%NAVANTA_ROOT%" || goto :end
 
 set "LOG_PATH=%HOST_DIR%\backuplog.txt"
 > "%LOG_PATH%" echo Backup started %date% %time%

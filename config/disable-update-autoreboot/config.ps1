@@ -3,7 +3,7 @@ param([switch]$NonInteractive)
 # Prevents Windows Update from auto-rebooting and from auto-installing updates while users are logged in.
 # Sets AUOptions=3: updates download automatically but require manual install trigger.
 
-Write-Host "  BankOnIT OSS | Disable Update Auto-Reboot" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Disable Update Auto-Reboot" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"

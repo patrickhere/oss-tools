@@ -2,7 +2,7 @@ param([switch]$NonInteractive)
 # config.ps1
 # Disables consumer OneDrive auto-install and removes it from the startup run key
 
-Write-Host "  BankOnIT OSS | Disable OneDrive Auto-Install" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Disable OneDrive Auto-Install" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"

@@ -3,7 +3,7 @@
 
 param([switch]$NonInteractive)
 
-Write-Host "  BankOnIT OSS | Edge IE Mode Sites" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Edge IE Mode Sites" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
@@ -19,7 +19,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit 1
 }
 
-$siteListPath = "C:\BankOnIT\ie-sites.xml"
+$siteListPath = "C:\Navanta\ie-sites.xml"
 $policyPath   = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
 
 # Ensure Edge IE mode policy is enabled

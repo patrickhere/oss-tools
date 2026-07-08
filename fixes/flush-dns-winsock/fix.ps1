@@ -3,7 +3,7 @@
 
 param([switch]$NonInteractive)
 
-Write-Host "  BankOnIT OSS | Flush DNS / Winsock Reset" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Flush DNS / Winsock Reset" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"

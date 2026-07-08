@@ -1,4 +1,4 @@
-# bankonit oss toolkit
+# navanta oss toolkit
 
 portable scripts for fixing common outlook, office, and windows issues on bank branch machines. built for onsite visits -> drop it on a usb stick, run `launcher.bat`, pick a tool.
 
@@ -98,7 +98,7 @@ when you select an environment at startup, a few tools change how they behave:
 
 ## packaging for sharing
 
-run `package.bat` to create `BankOnIT-OSS.zip` on your desktop. no git or powershell knowledge needed on the receiving end -> just unzip and run.
+run `package.bat` to create `Navanta-OSS.zip` on your desktop. no git or powershell knowledge needed on the receiving end -> just unzip and run.
 
 ---
 

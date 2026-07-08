@@ -1,17 +1,17 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    BankOnIT Backup Utility
+    Navanta Backup Utility
 .DESCRIPTION
     Backs up Belarc report, launches Transwiz, copies Public Desktop, and captures
     network configuration. Generates restore assets for engineering handoff.
-    Original script by redacted. Rewritten in PowerShell by Patrick Hart.
+    Rewritten in PowerShell by Patrick Hart.
 .PARAMETER BackupDest
     Override the backup destination path. Also accepts the BACKUP_DEST environment variable.
 .EXAMPLE
     .\Backup.ps1
     .\Backup.ps1 -BackupDest "E:\Backups"
-    .\Backup.ps1 -BackupDest "\\fileserver\BankOnIT\PC-Backups"
+    .\Backup.ps1 -BackupDest "\\fileserver\Navanta\PC-Backups"
 #>
 param(
     [string]$BackupDest
@@ -225,7 +225,7 @@ $banner = @'
    | |_) | (_| | | | |   <| |_| | | | | |  | |
    |____/ \__,_|_| |_|_|\_\\___/|_| |_|___| |_|
 
-    BankOnIT Backup Utility  --  PowerShell Edition
+    Navanta Backup Utility  --  PowerShell Edition
     patrick hart -- hartforge.dev
   ==================================================
   Computer : {0}

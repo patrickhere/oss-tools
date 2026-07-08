@@ -5,7 +5,7 @@ param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 
-Write-Host "  BankOnIT OSS | Event Log Errors" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Event Log Errors" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 Invoke-UpdateCheck
 
@@ -14,7 +14,7 @@ try {
     $since  = (Get-Date).AddHours(-24)
     $output = [System.Collections.Generic.List[string]]::new()
 
-    $output.Add("BankOnIT OSS | Event Log Errors (last 24h)")
+    $output.Add("Navanta OSS | Event Log Errors (last 24h)")
     $output.Add("patrick hart - hartforge.dev")
     $output.Add("Generated: $(Get-Date)")
     $output.Add("Machine: $env:COMPUTERNAME")

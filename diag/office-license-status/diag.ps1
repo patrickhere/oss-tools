@@ -5,7 +5,7 @@ param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 
-Write-Host "  BankOnIT OSS | Office License Status" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Office License Status" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 Invoke-UpdateCheck
 
@@ -45,7 +45,7 @@ try {
     $outFile   = Resolve-DiagOutput -Prefix 'OSS-license' -Timestamp $timestamp -OutputDir $OutputDir -ClientName $ClientName
 
     $output = @(
-        "BankOnIT OSS | Office License Status",
+        "Navanta OSS | Office License Status",
         "patrick hart - hartforge.dev",
         "Generated: $(Get-Date)",
         "Machine: $env:COMPUTERNAME",

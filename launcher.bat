@@ -16,7 +16,7 @@ if exist "%~dp0version.txt" set /p OSSVER=<"%~dp0version.txt"
 :: Check for updates (fails silently if server unreachable)
 cls
 echo ============================================================
-echo  BankOnIT OSS Toolkit  v%OSSVER%
+echo  Navanta OSS Toolkit  v%OSSVER%
 echo  patrick hart - hartforge.dev
 echo ============================================================
 echo.
@@ -27,7 +27,7 @@ set OSSMANAGED=1
 :SELECT_ENV
 cls
 echo ============================================================
-echo  BankOnIT OSS Toolkit  v%OSSVER%
+echo  Navanta OSS Toolkit  v%OSSVER%
 echo  patrick hart - hartforge.dev
 echo ============================================================
 echo.
@@ -51,7 +51,7 @@ if "%CLIENTNAME%"=="" goto GET_CLIENT
 :MENU
 cls
 echo ============================================================
-echo  BankOnIT OSS Toolkit  v%OSSVER%  [%OSSENV%]  [%CLIENTNAME%]
+echo  Navanta OSS Toolkit  v%OSSVER%  [%OSSENV%]  [%CLIENTNAME%]
 echo  patrick hart - hartforge.dev
 echo ============================================================
 echo.

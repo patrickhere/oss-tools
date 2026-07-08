@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    BankOnIT Restore Utility
+    Navanta Restore Utility
 .DESCRIPTION
     Restores user profile (Transwiz), Public Desktop, and browser bookmarks
     from a backup created by Backup.ps1. Can optionally stage the backup folder
@@ -39,9 +39,9 @@ trap {
 # ---------------------------------------------------------------------------
 # CONFIG -- all paths defined here
 # ---------------------------------------------------------------------------
-$BankOnITRoot  = "$env:SystemDrive\BankOnIT"
-$OldComputerDir = Join-Path $BankOnITRoot 'Old Computer'
-$StagingRoot    = Join-Path $BankOnITRoot 'Restore'
+$NavantaRoot  = "$env:SystemDrive\Navanta"
+$OldComputerDir = Join-Path $NavantaRoot 'Old Computer'
+$StagingRoot    = Join-Path $NavantaRoot 'Restore'
 
 # ---------------------------------------------------------------------------
 # TRACKING -- populated by Write-Log, consumed by Show-Summary
@@ -147,7 +147,7 @@ $banner = @'
    | |_) | (_| | | | |   <| |_| | | | | |  | |
    |____/ \__,_|_| |_|_|\_\\___/|_| |_|___| |_|
 
-    BankOnIT Restore Utility  --  PowerShell Edition
+    Navanta Restore Utility  --  PowerShell Edition
     patrick hart -- hartforge.dev
   ==================================================
   Computer : {0}
@@ -198,7 +198,7 @@ $DoStaging       = Read-Toggle -Prompt 'Stage backup locally via robocopy first 
 $DoTranswiz      = Read-Toggle -Prompt 'Restore user profile (Transwiz)'                                                        -Default $true
 $DoPublicDesktop = Read-Toggle -Prompt 'Restore Public Desktop'                                                                  -Default $true
 $DoBrowserData   = Read-Toggle -Prompt 'Restore browser bookmarks (Edge/Chrome/Firefox)'                                         -Default $true
-$DoCleanup       = Read-Toggle -Prompt 'Move old computer files to C:\BankOnIT\Old Computer'                                     -Default $true
+$DoCleanup       = Read-Toggle -Prompt 'Move old computer files to C:\Navanta\Old Computer'                                     -Default $true
 
 Write-Log "Staging: $(if ($DoStaging) {'enabled'} else {'skipped'})"
 Write-Log "Transwiz: $(if ($DoTranswiz) {'enabled'} else {'skipped'})"
@@ -341,10 +341,10 @@ if ($DoBrowserData) {
                 $anyFound = $true
             }
 
-            # Firefox -- profile dir has random name; copy to BankOnIT for manual import
+            # Firefox -- profile dir has random name; copy to Navanta for manual import
             $ffSrc = Join-Path $userDir.FullName 'Firefox\places.sqlite'
             if (Test-Path $ffSrc) {
-                $ffDest = Join-Path $BankOnITRoot "Firefox\$userName"
+                $ffDest = Join-Path $NavantaRoot "Firefox\$userName"
                 $null = New-Item -ItemType Directory -Path $ffDest -Force
                 Copy-Item $ffSrc (Join-Path $ffDest 'places.sqlite') -Force
                 Write-Log "Firefox bookmarks for $userName -> $ffDest"

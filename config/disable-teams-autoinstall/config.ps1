@@ -2,7 +2,7 @@ param([switch]$NonInteractive)
 # config.ps1
 # Prevents consumer Teams from auto-installing and launching on first logon
 
-Write-Host "  BankOnIT OSS | Disable Teams Auto-Install" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Disable Teams Auto-Install" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"

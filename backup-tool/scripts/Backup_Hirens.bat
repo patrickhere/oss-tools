@@ -1,10 +1,9 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-REM Author: redacted
-REM Contact: redacted@example.com
+REM Maintained by Patrick Hart - hartforge.dev
 REM Last Updated: 10/20/2020 (layout and logging updated 11/21/2025)
-REM This script is for the sole use of BankOnIT employees.
+REM This script is for the sole use of Navanta employees.
 
 echo Setting variables and changing directory to Backups folder...
 for /f "delims=" %%A in ('hostname') do set "hostname=%%A"
@@ -48,14 +47,14 @@ IF "%user%"=="" goto nouser
 
 :belarc
 call :log "Preparing Belarc Advisor assets..."
-if not exist "%SYSTEMDRIVE%\BankOnIT" mkdir "%SYSTEMDRIVE%\BankOnIT"
-if exist "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor" (
-    call :log "Belarc Advisor already installed under %SYSTEMDRIVE%\BankOnIT\Belarc Advisor"
+if not exist "%SYSTEMDRIVE%\Navanta" mkdir "%SYSTEMDRIVE%\Navanta"
+if exist "%SYSTEMDRIVE%\Navanta\Belarc Advisor" (
+    call :log "Belarc Advisor already installed under %SYSTEMDRIVE%\Navanta\Belarc Advisor"
 ) else (
     call :log "Belarc Advisor not found. Deploying installer from %BIN_DIR%advisorinstaller.exe"
-    mkdir "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor" 2>nul
+    mkdir "%SYSTEMDRIVE%\Navanta\Belarc Advisor" 2>nul
     if exist "%BIN_DIR%advisorinstaller.exe" (
-        copy "%BIN_DIR%advisorinstaller.exe" "%SYSTEMDRIVE%\BankOnIT\Belarc Advisor\" >nul
+        copy "%BIN_DIR%advisorinstaller.exe" "%SYSTEMDRIVE%\Navanta\Belarc Advisor\" >nul
     ) else (
         call :log "WARNING: Belarc advisorinstaller.exe missing at %BIN_DIR%advisorinstaller.exe"
     )

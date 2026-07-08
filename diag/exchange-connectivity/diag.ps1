@@ -5,7 +5,7 @@ param([ValidateSet('onprem','m365','hybrid')][string]$Environment = "onprem", [s
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 
-Write-Host "  BankOnIT OSS | Exchange Connectivity" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Exchange Connectivity" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 Invoke-UpdateCheck
 
@@ -16,7 +16,7 @@ try {
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
     $output    = [System.Collections.Generic.List[string]]::new()
 
-    $output.Add("BankOnIT OSS | Exchange Connectivity")
+    $output.Add("Navanta OSS | Exchange Connectivity")
     $output.Add("patrick hart - hartforge.dev")
     $output.Add("Generated: $(Get-Date)")
     $output.Add("Environment: $Environment")

@@ -5,7 +5,7 @@ param([string]$ClientName = "", [string]$OutputDir = "", [switch]$NonInteractive
 
 . (Join-Path $PSScriptRoot '..\lib\DiagHelpers.ps1')
 
-Write-Host "  BankOnIT OSS | Outlook Config Dump" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Outlook Config Dump" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 Invoke-UpdateCheck
 
@@ -14,7 +14,7 @@ try {
     $timestamp = Get-Date -Format "yyyy-MM-dd_HHmm"
     $output    = [System.Collections.Generic.List[string]]::new()
 
-    $output.Add("BankOnIT OSS | Outlook Config Dump")
+    $output.Add("Navanta OSS | Outlook Config Dump")
     $output.Add("patrick hart - hartforge.dev")
     $output.Add("Generated: $(Get-Date)")
     $output.Add("User: $env:USERDOMAIN\$env:USERNAME")

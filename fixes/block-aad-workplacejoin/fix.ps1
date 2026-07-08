@@ -6,7 +6,7 @@ param(
     [switch]$NonInteractive
 )
 
-Write-Host "  BankOnIT OSS | Block AAD Workplace Join" -ForegroundColor DarkGray
+Write-Host "  Navanta OSS | Block AAD Workplace Join" -ForegroundColor DarkGray
 Write-Host "  patrick hart - hartforge.dev" -ForegroundColor DarkGray
 # update check -- silent if server is unreachable
 $_upd = Join-Path $PSScriptRoot "..\..\.\update.ps1"
